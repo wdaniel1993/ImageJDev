@@ -22,6 +22,8 @@ public class MeanFilter_ implements PlugInFilter {
 		
 		int filterRadius = 1;
 		double ratio = 1.0 / 9.0;
+		
+		double correction = (filterRadius * 2 + 1) * (filterRadius * 2 + 1);
 		double[][] filterMask = new double[][]{{ratio,ratio,ratio},{ratio,ratio,ratio},{ratio,ratio,ratio}};
 		
 		for (int x = 0; x < width; x++){
@@ -29,6 +31,7 @@ public class MeanFilter_ implements PlugInFilter {
 				int origiValue = inArr[x][y];
 				
 				double sum = 0.0;
+				int pixelCount = 0;
 				
 				//filter one pixel
 				for(int xOffset = -filterRadius; xOffset <= filterRadius; xOffset ++){
@@ -38,13 +41,17 @@ public class MeanFilter_ implements PlugInFilter {
 						if(nbX >= 0 && nbX <width && nbY >= 0 && nbY < height){
 							double nbVal = inArr[nbX][nbY] * filterMask[xOffset + filterRadius][yOffset + filterRadius];
 							sum += nbVal;
+							pixelCount ++;
 						}
 						
 					}
 				}
 				
-				//apply pix result to image B
+				// correct border area
+				sum = (sum / pixelCount) * correction ;
 				
+				
+				//apply pix result to image B
 				int resultValue = (int)(sum +0.5);
 				outArr[x][y] = resultValue;
 			}
