@@ -17,14 +17,20 @@ public class InvertFilter_ implements PlugInFilter{
 		int height = ip.getHeight();
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
-		
+		int[][] outArr = new int[width][height];
 		//... do some filtering
 		
+		for (int x = 0; x < width; x++){
+			for (int y=0; y < height; y++){
+				int origiValue = inArr[x][y];
+				int resultValue = 255 - origiValue;
+				outArr[x][y] = resultValue;
+			}
+		}
 		
 		
-		
-		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(inArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "plotted image");
+		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
+		ImageJUtility.showNewImage(outPixels, width, height, "inverted image");
 		
 	} //run
 
