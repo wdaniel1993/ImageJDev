@@ -1,22 +1,20 @@
-import java.util.Collections;
-import java.util.List;
-
+import java.util.Arrays;
 
 public class MedianFilter_ extends AbstractMaskFilter{
 
 	@Override
-	protected Integer transformImagePoint(Integer pixel, Image2D mask) {
+	protected int transformImagePoint(int pixel, Image2D mask) {
 		int result = 0;
 		
-		List<Integer> pixels = mask.asList();
-		Collections.sort(pixels);
+		int[] pixels = mask.asArray();
+		Arrays.sort(pixels);
 	
-		int size = pixels.size();
+		int size = pixels.length;
 		
 		if(size % 2 == 0){
-			result = (int)(((pixels.get(size/2) + pixels.get((size/2)+1)) / 2.0) + 0.5);
+			result = (int)(((pixels[size/2 - 1] + pixels[(size/2)]) / 2.0) + 0.5);
 		}else{
-			result = pixels.get((size+1)/2);
+			result = pixels[(size-1)/2];
 		}
 		
 		return result;
