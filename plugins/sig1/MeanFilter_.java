@@ -28,8 +28,6 @@ public class MeanFilter_ implements PlugInFilter {
 		
 		for (int x = 0; x < width; x++){
 			for (int y=0; y < height; y++){
-				int origiValue = inArr[x][y];
-				
 				double sum = 0.0;
 				int pixelCount = 0;
 				
