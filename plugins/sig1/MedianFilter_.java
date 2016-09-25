@@ -3,7 +3,7 @@ import java.util.Arrays;
 public class MedianFilter_ extends AbstractMaskFilter{
 
 	@Override
-	protected int transformImagePoint(int pixel, Image2D mask) {
+	protected int transformImagePoint(int x, int y, Image2D mask) {
 		int result = 0;
 		
 		int[] pixels = mask.asArray();

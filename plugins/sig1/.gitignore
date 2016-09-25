@@ -13,3 +13,6 @@
 /Image2D$2.class
 /ImageIterator.class
 /AbstractImageIterator.class
+/GaussFilter_.class
+/MaskImage2D.class
+/Mask2D.class

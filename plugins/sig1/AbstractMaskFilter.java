@@ -32,7 +32,7 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 			int y = iterator.indexY();
 			
 			Image2D mask = inputImage.getMask(x, y, this.radius);
-			Integer newValue = transformImagePoint(pixel,mask);
+			Integer newValue = transformImagePoint(x,y,mask);
 			
 			outputImage.set(x, y, newValue);
 		}
@@ -41,7 +41,7 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		ImageJUtility.showNewImage(outPixels, width, height, getFilterName() + " calculated with radius r = " + this.radius);
 	}
 
-	protected abstract int transformImagePoint(int pixel, Image2D mask);
+	protected abstract int transformImagePoint(int x, int y, Image2D mask);
 
 	@Override
 	public int setup(String arg, ImagePlus imp) {
