@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Image2DUtility {
-	public static Image2D<Integer> convert1DByteArrToImage2D(byte[] pixels, int width, int height) {
+	public static Image2D convert1DByteArrToImage2D(byte[] pixels, int width, int height) {
 
 		List<Integer> intList = new ArrayList<Integer>();
 
@@ -13,15 +14,15 @@ public class Image2DUtility {
 			}
 			intList.add(pixel);
 		}
-		return new Image2D<Integer>(intList, width, height);
+		return new Image2D(intList, width, height);
 	}
 
-	public static byte[] convertFromImage2D(Image2D<Integer> image) {
+	public static byte[] convertFromImage2D(Image2D image) {
 		byte[] outArray2D = new byte[image.getPointCount()];
 
 		int pixelIdx1D = 0;
-		for (ImagePoint<Integer> point: image) {
-			int resultVal = point.getValue();
+		for (Iterator<Integer> it = image.rotatedIterator(); it.hasNext(); ) {
+			int resultVal = it.next();
 			if (resultVal > 127) {
 				resultVal -= 256;
 			}

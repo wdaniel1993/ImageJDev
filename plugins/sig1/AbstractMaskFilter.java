@@ -14,22 +14,26 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		
-		Image2D<Integer> inputImage = Image2DUtility.convert1DByteArrToImage2D(pixels, width, height);
-		Image2D<Integer> outputImage = Image2DUtility.convert1DByteArrToImage2D(pixels, width, height);
+		Image2D inputImage = Image2DUtility.convert1DByteArrToImage2D(pixels, width, height);
+		Image2D outputImage = Image2DUtility.convert1DByteArrToImage2D(pixels, width, height);
 		
 		GenericDialog gd = new GenericDialog("User Input");
-		gd.addNumericField("Radius", radius , 0);
+		gd.addNumericField("Radius", this.radius , 0);
 		gd.showDialog();
 		if(gd.wasCanceled()) {
 			return;
-		} //if
+		} 
+		
 		this.radius = (int)gd.getNextNumber();
 		
-		for (ImagePoint<Integer> pixel : inputImage){
-			Image2D<Integer> mask = inputImage.getMask(pixel.getX(), pixel.getY(), this.radius);
+		for (ImageIterator<Integer> iterator = inputImage.iterator(); iterator.hasNext();){
+			int pixel = iterator.next();
+			int x = iterator.indexX();
+			int y = iterator.indexY();
 			
+			Image2D mask = inputImage.getMask(x, y, this.radius);
 			Integer newValue = transformImagePoint(pixel,mask);
-			outputImage.set(new ImagePoint<Integer>(newValue,pixel.getX(),pixel.getY()));
+			outputImage.set(x, y, newValue);
 		}
 		
 		
@@ -37,7 +41,7 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		ImageJUtility.showNewImage(outPixels, width, height, getFilterName() + " calculated with radius r = " + this.radius);
 	}
 
-	protected abstract Integer transformImagePoint(ImagePoint<Integer> pixel, Image2D<Integer> mask);
+	protected abstract Integer transformImagePoint(Integer pixel, Image2D mask);
 
 	@Override
 	public int setup(String arg, ImagePlus imp) {
