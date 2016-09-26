@@ -19,10 +19,13 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		
 		GenericDialog gd = new GenericDialog("User Input");
 		gd.addNumericField("Radius", this.radius , 0);
+		prepareDialog(gd);
 		gd.showDialog();
-		if(!gd.wasCanceled()) {
-			this.radius = (int)gd.getNextNumber();
+		if(gd.wasCanceled()) {
+			return;
 		} 
+		this.radius = (int)gd.getNextNumber();
+		readDialogResult(gd);
 		
 		for (ImageIterator<Integer> iterator = inputImage.iterator(); iterator.hasNext();){
 			iterator.next();
@@ -38,6 +41,10 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		byte[] outPixels = Image2DUtility.convertFromImage2D(outputImage);
 		ImageJUtility.showNewImage(outPixels, width, height, getFilterName() + " calculated with radius r = " + this.radius);
 	}
+
+	protected void readDialogResult(GenericDialog gd) {}
+
+	protected void prepareDialog(GenericDialog gd) {}
 
 	protected abstract int transformImagePoint(int x, int y, Image2D mask);
 

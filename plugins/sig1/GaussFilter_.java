@@ -35,14 +35,6 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	public double [][] getMatrixGauss()
 	{
 		if(mask == null){
-			
-			GenericDialog gd = new GenericDialog("User Input");
-			gd.addNumericField("Sigma", this.sigma , 0);
-			gd.showDialog();
-			if(!gd.wasCanceled()) {
-				this.sigma = (int)gd.getNextNumber();
-			} 
-			
 			int maskWidth = this.getRadius()*2 +1;
 			double [][] matrix = new double[maskWidth][maskWidth];
 			for(int j=0;j<maskWidth;++j)
@@ -58,5 +50,17 @@ public class GaussFilter_ extends AbstractMaskFilter {
 		}
 		return mask;
 	}
+
+	@Override
+	protected void readDialogResult(GenericDialog gd) {
+		this.sigma = (int)gd.getNextNumber();		
+	}
+
+	@Override
+	protected void prepareDialog(GenericDialog gd) {
+		gd.addNumericField("Sigma", this.sigma , 0);
+	}
+	
+	
 
 }
