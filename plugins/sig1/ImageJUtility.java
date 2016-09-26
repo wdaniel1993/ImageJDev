@@ -20,7 +20,6 @@ public class ImageJUtility {
 		}
 		
 		return inArray2D;
-		
 	}
 	
 	public static byte[] convertFrom2DIntArr(int[][] inArr, int width, int height) {
