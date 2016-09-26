@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -17,35 +19,55 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		
+		int threadCount = 4;
+		
 		final Image2D inputImage = new Image2D(pixels, width, height);
 		final Image2D outputImage =  new Image2D(pixels, width, height);
 		
 		GenericDialog gd = new GenericDialog("User Input");
+		gd.addNumericField("Threads", threadCount , 0);
 		gd.addNumericField("Radius", this.radius , 0);
 		prepareDialog(gd);
 		gd.showDialog();
 		if(gd.wasCanceled()) {
 			return;
 		} 
+		threadCount = (int)gd.getNextNumber();
 		this.radius = (int)gd.getNextNumber();
 		readDialogResult(gd);
 		
 		final List<Thread> threads = new ArrayList<Thread>();
+
 		
-		for (ImageIterator<Integer> iterator = inputImage.iterator(); iterator.hasNext();){
-			final int pixel = iterator.next();
-			final int x = iterator.indexX();
-			final int y = iterator.indexY();
-			
+		final ImageIterator<Integer> iterator = inputImage.iterator();
+		final Lock lock = new ReentrantLock();
+		for(int i = 0; i < threadCount ; i++){
 			threads.add(new Thread(){
 				public void run() {  
-					Image2D mask = inputImage.getMask(x, y, AbstractMaskFilter.this.radius);
-					Integer newValue = transformImagePoint(x,y,mask);
-					
-					outputImage.set(x, y, newValue);
+					while(true){
+						int x = 0;
+						int y = 0;
+						lock.lock();
+						try {
+							if(iterator.hasNext()){
+								iterator.next();
+								x = iterator.indexX();
+								y = iterator.indexY();
+							}else{
+								return;
+							}
+						}finally {
+							lock.unlock();
+						}
+						Image2D mask = inputImage.getMask(x, y, AbstractMaskFilter.this.radius);
+						Integer newValue = transformImagePoint(x,y,mask);
+						
+						outputImage.set(x, y, newValue);
+					}
 				}
 			});
 		}
+		
 		
 		startAndJoin(threads);
 		
