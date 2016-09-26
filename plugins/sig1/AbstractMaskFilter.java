@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -14,8 +17,8 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 		
-		Image2D inputImage = new Image2D(pixels, width, height);
-		Image2D outputImage =  new Image2D(pixels, width, height);
+		final Image2D inputImage = new Image2D(pixels, width, height);
+		final Image2D outputImage =  new Image2D(pixels, width, height);
 		
 		GenericDialog gd = new GenericDialog("User Input");
 		gd.addNumericField("Radius", this.radius , 0);
@@ -27,20 +30,46 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		this.radius = (int)gd.getNextNumber();
 		readDialogResult(gd);
 		
+		final List<Thread> threads = new ArrayList<Thread>();
+		
 		for (ImageIterator<Integer> iterator = inputImage.iterator(); iterator.hasNext();){
-			iterator.next();
-			int x = iterator.indexX();
-			int y = iterator.indexY();
+			final int pixel = iterator.next();
+			final int x = iterator.indexX();
+			final int y = iterator.indexY();
 			
-			Image2D mask = inputImage.getMask(x, y, this.radius);
-			Integer newValue = transformImagePoint(x,y,mask);
-			
-			outputImage.set(x, y, newValue);
+			threads.add(new Thread(){
+				public void run() {  
+					Image2D mask = inputImage.getMask(x, y, AbstractMaskFilter.this.radius);
+					Integer newValue = transformImagePoint(x,y,mask);
+					
+					outputImage.set(x, y, newValue);
+				}
+			});
 		}
+		
+		startAndJoin(threads);
 		
 		byte[] outPixels = Image2DUtility.convertFromImage2D(outputImage);
 		ImageJUtility.showNewImage(outPixels, width, height, getFilterName() + " calculated with radius r = " + this.radius);
 	}
+	
+	private static void startAndJoin(List<Thread> threads)  
+    {  
+        for (int ithread = 0; ithread < threads.size(); ithread++)  
+        {  
+            threads.get(ithread).setPriority(Thread.NORM_PRIORITY);  
+            threads.get(ithread).start();  
+        }  
+  
+        try  
+        {     
+            for (int ithread = 0; ithread < threads.size(); ithread++)  
+            	threads.get(ithread).join();  
+        } catch (InterruptedException ie)  
+        {  
+            throw new RuntimeException(ie);  
+        }  
+    }  
 
 	protected void readDialogResult(GenericDialog gd) {}
 
