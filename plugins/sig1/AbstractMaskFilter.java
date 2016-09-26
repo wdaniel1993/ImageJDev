@@ -20,14 +20,12 @@ public abstract class AbstractMaskFilter implements PlugInFilter{
 		GenericDialog gd = new GenericDialog("User Input");
 		gd.addNumericField("Radius", this.radius , 0);
 		gd.showDialog();
-		if(gd.wasCanceled()) {
-			return;
+		if(!gd.wasCanceled()) {
+			this.radius = (int)gd.getNextNumber();
 		} 
 		
-		this.radius = (int)gd.getNextNumber();
-		
 		for (ImageIterator<Integer> iterator = inputImage.iterator(); iterator.hasNext();){
-			int pixel = iterator.next();
+			iterator.next();
 			int x = iterator.indexX();
 			int y = iterator.indexY();
 			
