@@ -1,3 +1,5 @@
+import filter.AbstractMaskFilter;
+import utility.Image2D;
 
 public class MeanFilter_ extends AbstractMaskFilter {
 

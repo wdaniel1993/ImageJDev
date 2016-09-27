@@ -1,5 +1,8 @@
 import java.util.Arrays;
 
+import filter.AbstractMaskFilter;
+import utility.Image2D;
+
 public class MedianFilter_ extends AbstractMaskFilter{
 
 	@Override

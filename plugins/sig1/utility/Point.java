@@ -1,3 +1,4 @@
+package utility;
 
 public class Point<T> {
 	private int x;

@@ -1,4 +1,6 @@
+import filter.AbstractMaskFilter;
 import ij.gui.GenericDialog;
+import utility.Image2D;
 
 public class GaussFilter_ extends AbstractMaskFilter {
 
@@ -53,11 +55,13 @@ public class GaussFilter_ extends AbstractMaskFilter {
 
 	@Override
 	protected void readDialogResult(GenericDialog gd) {
+		super.readDialogResult(gd);
 		this.sigma = (int)gd.getNextNumber();		
 	}
 
 	@Override
 	protected void prepareDialog(GenericDialog gd) {
+		super.prepareDialog(gd);
 		gd.addNumericField("Sigma", this.sigma , 0);
 	}
 	

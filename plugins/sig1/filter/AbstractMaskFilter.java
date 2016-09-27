@@ -1,19 +1,24 @@
+package filter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import utility.ByteImage2D;
+import utility.Image2D;
+import utility.Image2DUtility;
+import utility.ImageJUtility;
+import utility.Point;
 
 public abstract class AbstractMaskFilter implements PlugInFilter {
 
 	private int radius = 1;
+	private int threadCount = 4;
 
 	@Override
 	public void run(ImageProcessor ip) {
@@ -21,21 +26,15 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 
-		int threadCount = 4;
-
 		final Image2D inputImage = new ByteImage2D(pixels, width, height);
 		final Image2D outputImage = new ByteImage2D(pixels, width, height);
 
 		GenericDialog gd = new GenericDialog("User Input");
-		gd.addNumericField("Threads", threadCount, 0);
-		gd.addNumericField("Radius", this.radius, 0);
 		prepareDialog(gd);
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
 		}
-		threadCount = (int) gd.getNextNumber();
-		this.radius = (int) gd.getNextNumber();
 		readDialogResult(gd);
 
 		final List<Thread> threads = new ArrayList<Thread>();
@@ -105,7 +104,13 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 
 	protected abstract int transformImagePoint(int x, int y, Image2D mask);
 	
-	protected void readDialogResult(GenericDialog gd) {}
+	protected void readDialogResult(GenericDialog gd) {
+		this.threadCount = (int) gd.getNextNumber();
+		this.radius = (int) gd.getNextNumber();
+	}
 
-	protected void prepareDialog(GenericDialog gd) {}
+	protected void prepareDialog(GenericDialog gd) {
+		gd.addNumericField("Threads", this.threadCount, 0);
+		gd.addNumericField("Radius", this.radius, 0);
+	}
 }

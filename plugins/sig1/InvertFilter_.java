@@ -2,6 +2,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import utility.ImageJUtility;
 
 public class InvertFilter_ implements PlugInFilter{
 
