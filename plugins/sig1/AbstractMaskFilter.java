@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -37,31 +39,21 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 		readDialogResult(gd);
 
 		final List<Thread> threads = new ArrayList<Thread>();
-		final ImageIterator<Integer> iterator = inputImage.iterator();
-		final Lock lock = new ReentrantLock();
+		final Iterator<Point<Integer>> iterator = inputImage.pointIterator();
 
 		for (int i = 0; i < threadCount; i++) {
 			threads.add(new Thread() {
 				public void run() {
 					while (true) {
-						int x = 0;
-						int y = 0;
-						lock.lock();
 						try {
-							if (iterator.hasNext()) {
-								iterator.next();
-								x = iterator.indexX();
-								y = iterator.indexY();
-							} else {
-								return;
-							}
-						} finally {
-							lock.unlock();
-						}
-						Image2D mask = inputImage.getMask(x, y, AbstractMaskFilter.this.radius);
-						Integer newValue = transformImagePoint(x, y, mask);
+							Point<Integer> point = iterator.next();
+							Image2D mask = inputImage.getMask(point.getX(), point.getY(), AbstractMaskFilter.this.radius);
+							Integer newValue = transformImagePoint(point.getX(), point.getY(), mask);
 
-						outputImage.set(x, y, newValue);
+							outputImage.set(point.getX(), point.getY(), newValue);
+						}catch(NoSuchElementException ex){
+							return;
+						}
 					}
 				}
 			});

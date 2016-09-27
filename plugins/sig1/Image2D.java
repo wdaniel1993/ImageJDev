@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public abstract class Image2D implements Iterable<Integer> {
@@ -41,8 +42,8 @@ public abstract class Image2D implements Iterable<Integer> {
 	}
 
 	@Override
-	public ImageIterator<Integer> iterator() {
-		return new AbstractImageIterator<Integer>() {
+	public Iterator<Integer> iterator() {
+		return new Iterator<Integer>() {
 
 			private int nextX = 0;
 			private int nextY = 0;
@@ -57,22 +58,18 @@ public abstract class Image2D implements Iterable<Integer> {
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
-				currentX = nextX;
-				currentY = nextY;
 				Integer ret = Image2D.this.get(nextX++, nextY);
 				if(nextX >= width && nextY < height ){
 					nextX = 0;
 					nextY++;
 				}
 				return ret;
-			}
-
-			
+			}		
         };
 	}
 	
-	public ImageIterator<Integer> rotatedIterator() {
-		return new AbstractImageIterator<Integer>() {
+	public Iterator<Integer> rotatedIterator() {
+		return new Iterator<Integer>() {
 
 			private int nextX = 0;
 			private int nextY = 0;
@@ -87,8 +84,6 @@ public abstract class Image2D implements Iterable<Integer> {
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
-				currentX = nextX;
-				currentY = nextY;
 				Integer ret = Image2D.this.get(nextX, nextY++);
 				if(nextY >= height && nextX < width ){
 					nextX++;
@@ -97,6 +92,34 @@ public abstract class Image2D implements Iterable<Integer> {
 				return ret;
 			}
         };
+	}
+	
+	public Iterator<Point<Integer>> pointIterator() {
+		return new Iterator<Point<Integer>>() {
+				private int nextX = 0;
+				private int nextY = 0;
+				
+				@Override
+				public boolean hasNext() {
+					return (nextX < width && nextY < height);
+				}
+
+				@Override
+				public Point<Integer> next() {
+					if(!hasNext()){
+						throw new NoSuchElementException();
+					}
+					Point<Integer> ret = new Point<Integer>(nextX, nextY, Image2D.this.get(nextX, nextY));
+					nextX++;
+					if(nextX >= width && nextY < height ){
+						nextX = 0;
+						nextY++;
+					}
+					return ret;
+				}
+
+				
+	        };
 	}
 
 	public int getHeight() {
