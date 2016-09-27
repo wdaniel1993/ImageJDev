@@ -21,8 +21,8 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 
 		int threadCount = 4;
 
-		final Image2D inputImage = new Image2D(pixels, width, height);
-		final Image2D outputImage = new Image2D(pixels, width, height);
+		final Image2D inputImage = new ByteImage2D(pixels, width, height);
+		final Image2D outputImage = new ByteImage2D(pixels, width, height);
 
 		GenericDialog gd = new GenericDialog("User Input");
 		gd.addNumericField("Threads", threadCount, 0);
