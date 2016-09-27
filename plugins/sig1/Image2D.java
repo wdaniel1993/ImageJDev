@@ -54,7 +54,7 @@ public abstract class Image2D implements Iterable<Integer> {
 			}
 
 			@Override
-			public Integer next() {
+			public synchronized Integer next() {
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
@@ -80,7 +80,7 @@ public abstract class Image2D implements Iterable<Integer> {
 			}
 
 			@Override
-			public Integer next() {
+			public synchronized Integer next() {
 				if(!hasNext()){
 					throw new NoSuchElementException();
 				}
@@ -105,7 +105,7 @@ public abstract class Image2D implements Iterable<Integer> {
 				}
 
 				@Override
-				public Point<Integer> next() {
+				public synchronized Point<Integer> next() {
 					if(!hasNext()){
 						throw new NoSuchElementException();
 					}
