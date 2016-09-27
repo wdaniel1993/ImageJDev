@@ -74,16 +74,6 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 				getFilterName() + " calculated with radius r = " + this.radius);
 	}
 
-	protected void readDialogResult(GenericDialog gd) {
-	}
-
-	protected void prepareDialog(GenericDialog gd) {
-	}
-
-	protected abstract String getFilterName();
-
-	protected abstract int transformImagePoint(int x, int y, Image2D mask);
-
 	@Override
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("about")) {
@@ -118,4 +108,12 @@ public abstract class AbstractMaskFilter implements PlugInFilter {
 	public int getMaxMaskFields() {
 		return (this.radius * 2 + 1) * (this.radius * 2 + 1);
 	}
+
+	protected abstract String getFilterName();
+
+	protected abstract int transformImagePoint(int x, int y, Image2D mask);
+	
+	protected void readDialogResult(GenericDialog gd) {}
+
+	protected void prepareDialog(GenericDialog gd) {}
 }
