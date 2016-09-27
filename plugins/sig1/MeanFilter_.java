@@ -4,7 +4,7 @@ public class MeanFilter_ extends AbstractMaskFilter {
 	@Override
 	protected String getFilterName() {
 		// TODO Auto-generated method stub
-		return null;
+		return "mean filter";
 	}
 
 	@Override
