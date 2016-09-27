@@ -1,68 +1,19 @@
-import ij.IJ;
-import ij.ImagePlus;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ImageProcessor;
 
-public class MeanFilter_ implements PlugInFilter {
+public class MeanFilter_ extends AbstractMaskFilter {
 
-	public int setup(String arg, ImagePlus imp) {
-		if (arg.equals("about"))
-			{showAbout(); return DONE;}
-		return DOES_8G+SUPPORTS_MASKING;
-	} //setup
+	@Override
+	protected String getFilterName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	public void run(ImageProcessor ip) {
-		byte[] pixels = (byte[])ip.getPixels();
-		int width = ip.getWidth();
-		int height = ip.getHeight();
-		
-		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
-		int[][] outArr = new int[width][height];
-		//... do some filtering
-		
-		int filterRadius = 1;
-		double ratio = 1.0 / 9.0;
-		
-		double correction = (filterRadius * 2 + 1) * (filterRadius * 2 + 1);
-		double[][] filterMask = new double[][]{{ratio,ratio,ratio},{ratio,ratio,ratio},{ratio,ratio,ratio}};
-		
-		for (int x = 0; x < width; x++){
-			for (int y=0; y < height; y++){
-				double sum = 0.0;
-				int pixelCount = 0;
-				
-				//filter one pixel
-				for(int xOffset = -filterRadius; xOffset <= filterRadius; xOffset ++){
-					for(int yOffset = -filterRadius; yOffset <= filterRadius; yOffset ++){
-						int  nbX =  x+ xOffset;
-						int nbY = y + yOffset;
-						if(nbX >= 0 && nbX <width && nbY >= 0 && nbY < height){
-							double nbVal = inArr[nbX][nbY] * filterMask[xOffset + filterRadius][yOffset + filterRadius];
-							sum += nbVal;
-							pixelCount ++;
-						}
-						
-					}
-				}
-				
-				// correct border area
-				sum = (sum / pixelCount) * correction ;
-				
-				
-				//apply pix result to image B
-				int resultValue = (int)(sum +0.5);
-				outArr[x][y] = resultValue;
-			}
+	@Override
+	protected int transformImagePoint(int x, int y, Image2D mask) {
+		double sum = 0;
+		for(Integer val : mask){
+			sum += val.doubleValue() / mask.getPointCount();
 		}
-		
-		
-		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "mean filter calculated with radius r = 1");
-		
-	} //run
+		return (int) (sum + 0.5);
+	}
 
-	void showAbout() {
-		IJ.showMessage("About mean filter...",
-			"this is a PluginFilter template\n");
-	} //showAbout
 }
