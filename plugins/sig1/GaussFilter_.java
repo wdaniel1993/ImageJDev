@@ -1,10 +1,7 @@
 import filter.AbstractMaskFilter;
-import ij.IJ;
 import ij.gui.GenericDialog;
 import ij.process.ImageProcessor;
-import utility.ByteImage2D;
 import utility.Image2D;
-import utility.Image2DUtility;
 import utility.ImageJUtility;
 
 public class GaussFilter_ extends AbstractMaskFilter {
@@ -56,8 +53,7 @@ public class GaussFilter_ extends AbstractMaskFilter {
 
 	@Override
 	public String getFilterName() {
-		// TODO Auto-generated method stub
-		return "Gauss Filter";
+		return "gauss filter";
 	}
 	
 	public double [][] getMatrixGauss()
