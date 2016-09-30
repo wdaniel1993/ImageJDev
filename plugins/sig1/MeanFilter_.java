@@ -4,7 +4,7 @@ import utility.Image2D;
 public class MeanFilter_ extends AbstractMaskFilter {
 
 	@Override
-	protected String getFilterName() {
+	public String getFilterName() {
 		// TODO Auto-generated method stub
 		return "mean filter";
 	}

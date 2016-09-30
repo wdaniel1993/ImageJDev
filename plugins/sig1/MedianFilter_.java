@@ -24,7 +24,7 @@ public class MedianFilter_ extends AbstractMaskFilter{
 	}
 
 	@Override
-	protected String getFilterName() {
+	public String getFilterName() {
 		return "median filter";
 	}
 

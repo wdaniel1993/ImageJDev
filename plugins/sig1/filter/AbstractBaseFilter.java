@@ -50,9 +50,9 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 	
 	public abstract void processImage(final Image2D inputImage, final Image2D outputImage);
 	
-	protected abstract String getFilterName();
+	public abstract String getFilterName();
 	
-	protected abstract void readDialogResult(GenericDialog gd);
+	public abstract void readDialogResult(GenericDialog gd);
 
-	protected abstract void prepareDialog(GenericDialog gd);
+	public abstract void prepareDialog(GenericDialog gd);
 }

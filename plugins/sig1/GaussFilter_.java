@@ -12,6 +12,7 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	private double[][] mask;
 	private double maxGauss = 0;
 	private double sigma = 2;
+	
 	@Override
 	protected int transformImagePoint(int x, int y, Image2D mask) {
 		int startIndexX = x - this.getRadius() > 0 ? 0 : this.getRadius() - x;
@@ -54,7 +55,7 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	}
 
 	@Override
-	protected String getFilterName() {
+	public String getFilterName() {
 		// TODO Auto-generated method stub
 		return "Gauss Filter";
 	}
@@ -82,13 +83,13 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	}
 
 	@Override
-	protected void readDialogResult(GenericDialog gd) {
+	public void readDialogResult(GenericDialog gd) {
 		super.readDialogResult(gd);
 		this.sigma = gd.getNextNumber();		
 	}
 
 	@Override
-	protected void prepareDialog(GenericDialog gd) {
+	public void prepareDialog(GenericDialog gd) {
 		super.prepareDialog(gd);
 		gd.addNumericField("Sigma", this.sigma , 1);
 	}
