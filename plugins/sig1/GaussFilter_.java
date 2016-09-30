@@ -1,10 +1,16 @@
 import filter.AbstractMaskFilter;
+import ij.IJ;
 import ij.gui.GenericDialog;
+import ij.process.ImageProcessor;
+import utility.ByteImage2D;
 import utility.Image2D;
+import utility.Image2DUtility;
+import utility.ImageJUtility;
 
 public class GaussFilter_ extends AbstractMaskFilter {
 
 	private double[][] mask;
+	private double maxGauss = 0;
 	private double sigma = 2;
 	@Override
 	protected int transformImagePoint(int x, int y, Image2D mask) {
@@ -27,6 +33,25 @@ public class GaussFilter_ extends AbstractMaskFilter {
 		
 		return (int) (sum + 0.5);
 	}
+	
+	@Override
+	public void run(ImageProcessor ip) {
+		super.run(ip);
+		
+		int maskWidth = this.getRadius()*2 +1;
+		double[][] mask = getMatrixGauss();
+		int[][] gaussFilter = new int[maskWidth][maskWidth];
+				
+		
+		for(int x= 0; x< maskWidth ; x++){
+			for(int y= 0; y< maskWidth; y++){
+				gaussFilter[x][y] = (int) (255 * (mask[x][y]/maxGauss) + 0.5);
+			}
+		}
+		
+		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(gaussFilter, maskWidth, maskWidth);
+		ImageJUtility.showNewImage(outPixels, maskWidth, maskWidth, "gauss mask");
+	}
 
 	@Override
 	protected String getFilterName() {
@@ -46,6 +71,9 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	            	int x = i-(maskWidth/2);
 	            	int y = j-(maskWidth/2);
 	            	matrix[i][j]=(1/(2*Math.PI*sigma*sigma))*Math.pow(Math.E,-((Math.pow(x,2)+Math.pow(y,2))/(2*Math.pow(sigma,2))));
+	            	if(matrix[i][j] > maxGauss){
+	            		maxGauss = matrix[i][j];
+	            	}
 	            }
 	        }
 			mask = matrix;
@@ -56,13 +84,13 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	@Override
 	protected void readDialogResult(GenericDialog gd) {
 		super.readDialogResult(gd);
-		this.sigma = (int)gd.getNextNumber();		
+		this.sigma = gd.getNextNumber();		
 	}
 
 	@Override
 	protected void prepareDialog(GenericDialog gd) {
 		super.prepareDialog(gd);
-		gd.addNumericField("Sigma", this.sigma , 0);
+		gd.addNumericField("Sigma", this.sigma , 1);
 	}
 	
 	
