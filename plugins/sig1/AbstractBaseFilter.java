@@ -1,4 +1,4 @@
-package filter;
+
 
 import ij.IJ;
 import ij.ImagePlus;

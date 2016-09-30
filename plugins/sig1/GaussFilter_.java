@@ -1,4 +1,3 @@
-import filter.AbstractMaskFilter;
 import ij.gui.GenericDialog;
 import ij.process.ImageProcessor;
 import utility.Image2D;
