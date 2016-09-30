@@ -45,7 +45,7 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	            {
 	            	int x = i-(maskWidth/2);
 	            	int y = j-(maskWidth/2);
-	            	matrix[i][j]=Math.pow(Math.E,-((Math.pow(x,2)+Math.pow(y,2))/(2*Math.pow(sigma,2))));
+	            	matrix[i][j]=(1/(2*Math.PI*sigma*sigma))*Math.pow(Math.E,-((Math.pow(x,2)+Math.pow(y,2))/(2*Math.pow(sigma,2))));
 	            }
 	        }
 			mask = matrix;
