@@ -21,13 +21,7 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 		final Image2D inputImage = new ByteImage2D(pixels, width, height);
 		final Image2D outputImage = new ByteImage2D(pixels, width, height);
 
-		GenericDialog gd = new GenericDialog("User Input");
-		prepareDialog(gd);
-		gd.showDialog();
-		if (gd.wasCanceled()) {
-			return;
-		}
-		readDialogResult(gd);
+		inputDialog();
 		
 		processImage(inputImage, outputImage);
 		
@@ -55,4 +49,14 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 	public abstract void readDialogResult(GenericDialog gd);
 
 	public abstract void prepareDialog(GenericDialog gd);
+	
+	public void inputDialog(){
+		GenericDialog gd = new GenericDialog("User Input");
+		prepareDialog(gd);
+		gd.showDialog();
+		if (gd.wasCanceled()) {
+			return;
+		}
+		readDialogResult(gd);
+	}
 }

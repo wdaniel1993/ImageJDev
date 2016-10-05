@@ -19,6 +19,7 @@ public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 		addFilterToChoices(new GaussFilter_());
 		addFilterToChoices(new MedianFilter_());
 		addFilterToChoices(new MeanFilter_());
+		addFilterToChoices(new HistogramEqualizationFilter_());
 	}
 	
 	private void addFilterToChoices(AbstractBaseFilter plugin){
@@ -31,13 +32,7 @@ public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 		final Image2D pluginImage = new ByteImage2D(Image2DUtility.convertFromImage2D(outputImage), outputImage.getWidth(), outputImage.getHeight());
 		
 		AbstractBaseFilter plugin = choices.get(choice);
-		GenericDialog gd = new GenericDialog("User Input");
-		plugin.prepareDialog(gd);
-		gd.showDialog();
-		if (gd.wasCanceled()) {
-			return;
-		}
-		plugin.readDialogResult(gd);
+		plugin.inputDialog();
 		plugin.processImage(inputImage, pluginImage);
 		
 		compareImage(inputImage, pluginImage, outputImage);
