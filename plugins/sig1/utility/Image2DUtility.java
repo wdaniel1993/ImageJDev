@@ -1,8 +1,14 @@
 package utility;
 import java.util.Iterator;
 
+
+/*
+ * Utility class for Image2D
+ * converts the Image2D into a byte array
+ */
 public class Image2DUtility {
 
+	
 	public static byte[] convertFromImage2D(Image2D image) {
 		byte[] outArray2D = new byte[image.getPointCount()];
 

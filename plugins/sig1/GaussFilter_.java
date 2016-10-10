@@ -3,12 +3,20 @@ import ij.process.ImageProcessor;
 import utility.Image2D;
 import utility.ImageJUtility;
 
+/**
+ * Implementation of the gaussian blur filter
+ *
+ */
 public class GaussFilter_ extends AbstractMaskFilter {
 
 	private double[][] mask;
 	private double maxGauss = 0;
 	private double sigma = 2;
 	
+	/*
+	 * Transform one point with consideration of the mask
+	 * returns the transformed value of the point x, y
+	 */
 	@Override
 	protected int transformImagePoint(int x, int y, Image2D mask) {
 		int startIndexX = x - this.getRadius() > 0 ? 0 : this.getRadius() - x;
@@ -33,8 +41,15 @@ public class GaussFilter_ extends AbstractMaskFilter {
 	
 	@Override
 	public void run(ImageProcessor ip) {
+		/*
+		 * Calls the run method of the super class, which iterates over every point of an image
+		 * and calls the transformImagePoint method 
+		 */
 		super.run(ip);
 		
+		/*
+		 * Output of the gauss factor matrix (method getMatrixGauss)
+		 */
 		int maskWidth = this.getRadius()*2 +1;
 		double[][] mask = getMatrixGauss();
 		int[][] gaussFilter = new int[maskWidth][maskWidth];
@@ -55,6 +70,9 @@ public class GaussFilter_ extends AbstractMaskFilter {
 		return "gauss filter";
 	}
 	
+	/*
+	 * Returns a mask with factors for multiplication with the masks values
+	 */
 	public double [][] getMatrixGauss()
 	{
 		if(mask == null){
@@ -88,7 +106,4 @@ public class GaussFilter_ extends AbstractMaskFilter {
 		super.prepareDialog(gd);
 		gd.addNumericField("Sigma", this.sigma , 1);
 	}
-	
-	
-
 }

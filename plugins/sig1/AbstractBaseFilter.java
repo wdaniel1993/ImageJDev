@@ -1,5 +1,3 @@
-
-
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -10,6 +8,11 @@ import utility.Image2D;
 import utility.Image2DUtility;
 import utility.ImageJUtility;
 
+/**
+ * Abstractly implements the ImageJ PlugInFilter
+ * Unifies the input dialog and defines a processImage method
+ *
+ */
 public abstract class AbstractBaseFilter implements PlugInFilter {
 	
 	@Override
@@ -42,6 +45,9 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 		IJ.showMessage("About " + getFilterName() + "...", "this is a PluginFilter template\n");
 	}
 	
+	/*
+	 * processes an Image2D (inputImage) and writes the transformed values into the outputImage
+	 */
 	public abstract void processImage(final Image2D inputImage, final Image2D outputImage);
 	
 	public abstract String getFilterName();
@@ -50,6 +56,9 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 
 	public abstract void prepareDialog(GenericDialog gd);
 	
+	/*
+	 * Opens a dialog, prepares the dialog and reads the values
+	 */
 	public void inputDialog(){
 		GenericDialog gd = new GenericDialog("User Input");
 		prepareDialog(gd);

@@ -2,6 +2,13 @@ package utility;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+/**
+ * Image2D
+ * Abstract base class
+ * Represents an image with X and Y axis, width, height
+ * defines iterators
+ *
+ */
 public abstract class Image2D implements Iterable<Integer> {
 	private int width;
 	private int height;
@@ -15,6 +22,9 @@ public abstract class Image2D implements Iterable<Integer> {
 		return height * width;
 	}
 	
+	/*
+	 * returns a separate image which is defined by offset, width and height
+	 */
 	public Image2D getSubImage(int offsetX, int offsetY, int width, int height){
 		int subImageOffsetX = Math.max(offsetX,0);
 		int subImageOffsetY = Math.max(offsetY,0);
@@ -24,6 +34,9 @@ public abstract class Image2D implements Iterable<Integer> {
 		return new MaskImage2D(this,subImageOffsetX, subImageOffsetY, subImageWidth,subImageHeight);
 	}
 	
+	/*
+	 * returns a subimage which is defined by a point and a surrounding radius
+	 */
 	public Image2D getMask(int x, int y, int radius){
 		return getSubImage(x-radius, y - radius, radius*2+1,radius*2+1);
 	}
@@ -32,6 +45,9 @@ public abstract class Image2D implements Iterable<Integer> {
 	
 	public abstract void set(int x, int y, Integer point);
 	
+	/*
+	 * returns the values of the image as array
+	 */
 	public int[] asArray(){
 		int[] intArr = new int[getPointCount()];
 		
@@ -42,6 +58,9 @@ public abstract class Image2D implements Iterable<Integer> {
 		return intArr;
 	}
 
+	/*
+	 * Iterator for the image, iterates row wise
+	 */
 	@Override
 	public Iterator<Integer> iterator() {
 		return new Iterator<Integer>() {
@@ -69,6 +88,9 @@ public abstract class Image2D implements Iterable<Integer> {
         };
 	}
 	
+	/*
+	 * Iterator for the image, iterates column wise
+	 */
 	public Iterator<Integer> rotatedIterator() {
 		return new Iterator<Integer>() {
 
@@ -95,6 +117,10 @@ public abstract class Image2D implements Iterable<Integer> {
         };
 	}
 	
+	/*
+	 * Iterator for the image, iterates row wise
+	 * returns the value and the coordinates of the pixel
+	 */
 	public Iterator<Point<Integer>> pointIterator() {
 		return new Iterator<Point<Integer>>() {
 				private int nextX = 0;

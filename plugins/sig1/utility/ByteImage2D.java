@@ -1,9 +1,15 @@
 package utility;
 
+/**
+ * Implements Image2D backed with a two dimensional int array, which represents the values of the pixels
+ */
 public class ByteImage2D extends Image2D{
 
 	private int[][] image;
 	
+	/*
+	 * Initialises the two dimensional array with a byte array
+	 */
 	public ByteImage2D(byte[] values, int width, int height){
 		super(width, height);
 		int[][] array2D = new int[width][height];
@@ -21,6 +27,9 @@ public class ByteImage2D extends Image2D{
 		image = array2D;
 	}
 	
+	/*
+	 * Initialises the two dimensional array with a int array
+	 */
 	public ByteImage2D(int[] values, int width, int height){
 		super(width, height);
 		int[][] array2D = new int[width][height];

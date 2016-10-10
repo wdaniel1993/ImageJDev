@@ -8,6 +8,9 @@ import ij.gui.GenericDialog;
 import utility.Image2D;
 import utility.Point;
 
+/**
+ * AbstractMaskFilter is the base class for all filters which are using the surrounding pixels for value calculation
+ */
 public abstract class AbstractMaskFilter extends AbstractBaseFilter {
 
 	private int radius = 1;
@@ -17,17 +20,18 @@ public abstract class AbstractMaskFilter extends AbstractBaseFilter {
 		final List<Thread> threads = new ArrayList<Thread>();
 		final Iterator<Point<Integer>> iterator = inputImage.pointIterator();
 
+		// Starts the user defined number of threads, which iterator together over the image points
 		for (int i = 0; i < threadCount; i++) {
 			threads.add(new Thread() {
 				public void run() {
 					while (true) {
 						try {
-							Point<Integer> point = iterator.next();
-							Image2D mask = inputImage.getMask(point.getX(), point.getY(), AbstractMaskFilter.this.radius);
-							Integer newValue = transformImagePoint(point.getX(), point.getY(), mask);
+							Point<Integer> point = iterator.next(); // get point from iterator
+							Image2D mask = inputImage.getMask(point.getX(), point.getY(), AbstractMaskFilter.this.radius); // get mask surround the point
+							Integer newValue = transformImagePoint(point.getX(), point.getY(), mask); // transform the point considering the mask
 
-							outputImage.set(point.getX(), point.getY(), newValue);
-						}catch(NoSuchElementException ex){
+							outputImage.set(point.getX(), point.getY(), newValue); // set the newValue in the output image
+						}catch(NoSuchElementException ex){ //iterator came to an end
 							return;
 						}
 					}
@@ -38,6 +42,9 @@ public abstract class AbstractMaskFilter extends AbstractBaseFilter {
 		startAndJoin(threads);
 	}
 
+	/*
+	 * Starts the threads and blocks the main thread by joining the calculation threads
+	 */
 	private static void startAndJoin(List<Thread> threads) {
 		for (int ithread = 0; ithread < threads.size(); ithread++) {
 			threads.get(ithread).setPriority(Thread.NORM_PRIORITY);

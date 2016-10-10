@@ -1,5 +1,9 @@
 package utility;
 
+/**
+ * Proxies an Image2D with an offset, width and height
+ * represents a subimage
+ */
 public class MaskImage2D extends Image2D {
 
 	private Image2D image;

@@ -1,5 +1,3 @@
-
-
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -10,12 +8,19 @@ import utility.Image2D;
 import utility.Image2DUtility;
 import utility.ImageJUtility;
 
+/**
+ * Abstract base class for all filters which compare two images
+ */
 public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 
 	private Dictionary<String,AbstractBaseFilter> choices = new Hashtable<String,AbstractBaseFilter>();
 	private String choice;
 	
 	public AbstractCompareFilter(){
+		/*
+		 * Adds filter choices for the input dialog
+		 * the original image and the filtered image will be compared
+		 */
 		addFilterToChoices(new GaussFilter_());
 		addFilterToChoices(new MedianFilter_());
 		addFilterToChoices(new MeanFilter_());
@@ -29,14 +34,18 @@ public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 	
 	@Override
 	public void processImage(Image2D inputImage, Image2D outputImage) {
+		//copies the outputImage
 		final Image2D pluginImage = new ByteImage2D(Image2DUtility.convertFromImage2D(outputImage), outputImage.getWidth(), outputImage.getHeight());
 		
+		//use the selected filter on the image
 		AbstractBaseFilter plugin = choices.get(choice);
 		plugin.inputDialog();
 		plugin.processImage(inputImage, pluginImage);
 		
+		//compare the original image with the filtered one
 		compareImage(inputImage, pluginImage, outputImage);
 		
+		//output the filtered image in a separate window (the comparison will be shown in the base class)
 		byte[] outPixels = Image2DUtility.convertFromImage2D(pluginImage);
 		ImageJUtility.showNewImage(outPixels, pluginImage.getWidth(), pluginImage.getHeight(),plugin.getFilterName());
 	}
