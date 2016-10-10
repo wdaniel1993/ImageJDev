@@ -13,19 +13,13 @@ public class HistogramEqualizationFilter_ extends AbstractBaseFilter {
 		final Iterator<Point<Integer>> pointIterator = inputImage.pointIterator();
 		final Iterator<Integer> intIterator = inputImage.iterator();
 	
-		int max = 0;
-		int min = 255;
+		int max = 255;
+		int min = 0;
 		int count = 0;
 		Map<Integer,Integer> map = new HashMap<Integer,Integer>();
 		
 		while (intIterator.hasNext()){
 			Integer val = intIterator.next();
-			if(val < min){
-				min = val;
-			}
-			if(val > max){
-				max = val;
-			}
 			if(!map.containsKey(val)){
 				map.put(val, 1);
 			}else{
