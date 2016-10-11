@@ -6,6 +6,10 @@ import ij.gui.GenericDialog;
 import utility.Image2D;
 import utility.Point;
 
+/**
+ * Implementation of a history equalization filter
+ *
+ */
 public class HistogramEqualizationFilter_ extends AbstractBaseFilter {
 
 	@Override
@@ -16,30 +20,46 @@ public class HistogramEqualizationFilter_ extends AbstractBaseFilter {
 		int max = 255;
 		int min = 0;
 		int count = 0;
-		Map<Integer,Integer> map = new HashMap<Integer,Integer>();
+		Map<Integer,Integer> mapFrequency = new HashMap<Integer,Integer>();
+		Map<Integer,Integer> mapValueTransform = new HashMap<Integer,Integer>();
 		
+		//get count for each pixel value by writing them in a map
 		while (intIterator.hasNext()){
 			Integer val = intIterator.next();
-			if(!map.containsKey(val)){
-				map.put(val, 1);
+			if(!mapFrequency.containsKey(val)){
+				mapFrequency.put(val, 1);
 			}else{
-				map.put(val, map.get(val) + 1);
+				mapFrequency.put(val, mapFrequency.get(val) + 1);
 			}
 			count++;
 		}
 		
+		/*
+		 * calculate mapping old values <-> new values
+		 */
 		int factor = max - min + 1;
+		double sum = 0;
+		int lastPoint = 0;
 		
-		while (pointIterator.hasNext()) {
-			Point<Integer> current = pointIterator.next();
-			double sum = 0;
-			
-			for(int i=0;i<=current.getValue();i++){
-				if(map.containsKey(i)){
-					sum += (map.get(i) / (double) count);
+		for(int i = min; i <= max; i++){
+			for(;lastPoint<=i;lastPoint++){
+				if(mapFrequency.containsKey(lastPoint)){
+					sum += (mapFrequency.get(lastPoint) / (double) count);
 				}
 			}
-			int newVal = ((int) (sum * factor)) + min;
+			int transformVal = ((int) (sum * factor)) + min;
+			mapValueTransform.put(i, transformVal);
+		}
+		
+		
+		
+		/*
+		 * Iterate over the image and transform each value by considering the frequency of the value
+		 */
+		while (pointIterator.hasNext()) {
+			Point<Integer> current = pointIterator.next();
+
+			int newVal = mapValueTransform.get(current.getValue());
 			
 			outputImage.set(current.getX(), current.getY(), newVal);
 		}

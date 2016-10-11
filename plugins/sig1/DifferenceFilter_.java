@@ -2,6 +2,10 @@ import java.util.Iterator;
 import utility.Image2D;
 import utility.Point;
 
+/**
+ * DifferenceFilter
+ * Displays the difference of the original and the filtered image by calculating the the (absolute) difference between the points
+ */
 public class DifferenceFilter_ extends AbstractCompareFilter{
 
 	public String getFilterName() {
@@ -14,11 +18,13 @@ public class DifferenceFilter_ extends AbstractCompareFilter{
 		Iterator<Point<Integer>> inputIterator = inputImage.pointIterator();
 		Iterator<Point<Integer>> pluginIterator = pluginImage.pointIterator();
 		
+		//Iterate over every point of the pictures
 		while (inputIterator.hasNext()) {
 			
 			Point<Integer> inputPoint = inputIterator.next();
 			Point<Integer> pluginPoint = pluginIterator.next();
 			
+			//Absolute difference between the points in the original and the filtered image
 			Integer newValue = Math.abs(inputPoint.getValue() - pluginPoint.getValue());
 
 			outputImage.set(inputPoint.getX(), inputPoint.getY(), newValue);
