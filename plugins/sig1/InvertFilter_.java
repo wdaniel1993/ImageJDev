@@ -1,44 +1,37 @@
-import ij.IJ;
-import ij.ImagePlus;
-import ij.plugin.filter.PlugInFilter;
-import ij.process.ImageProcessor;
-import utility.ImageJUtility;
+import java.util.Iterator;
 
-public class InvertFilter_ implements PlugInFilter{
+import ij.gui.GenericDialog;
+import utility.Image2D;
+import utility.Point;
 
-	public int setup(String arg, ImagePlus imp) {
-		if (arg.equals("about"))
-			{showAbout(); return DONE;}
-		return DOES_8G+SUPPORTS_MASKING;
-	} //setup
+public class InvertFilter_ extends AbstractBaseFilter {
 
-	public void run(ImageProcessor ip) {
-		byte[] pixels = (byte[])ip.getPixels();
-		int width = ip.getWidth();
-		int height = ip.getHeight();
+	@Override
+	public void processImage(Image2D inputImage, Image2D outputImage) {
+		final Iterator<Point<Integer>> pointIterator = inputImage.pointIterator();
 		
-		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
-		int[][] outArr = new int[width][height];
-		//... do some filtering
-		
-		for (int x = 0; x < width; x++){
-			for (int y=0; y < height; y++){
-				int origiValue = inArr[x][y];
-				int resultValue = 255 - origiValue;
-				outArr[x][y] = resultValue;
-			}
+		/*
+		 * Iterate over the image and transform each value by considering the frequency of the value
+		 */
+		while (pointIterator.hasNext()) {
+			Point<Integer> current = pointIterator.next();
+
+			int newVal = 255 - current.getValue();
+			
+			outputImage.set(current.getX(), current.getY(), newVal);
 		}
-		
-		
-		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "inverted image");
-		
-	} //run
+	}
 
-	void showAbout() {
-		IJ.showMessage("About Template_...",
-			"this is a PluginFilter template\n");
-	} //showAbout
+	@Override
+	public String getFilterName() {
+		return "invert filter";
+	}
 
+	@Override
+	public void readDialogResult(GenericDialog gd) {	}
+
+	@Override
+	public void prepareDialog(GenericDialog gd) {	}
 	
+	public void inputDialog(){}
 }

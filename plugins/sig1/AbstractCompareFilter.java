@@ -25,6 +25,7 @@ public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 		addFilterToChoices(new MedianFilter_());
 		addFilterToChoices(new MeanFilter_());
 		addFilterToChoices(new HistogramEqualizationFilter_());
+		addFilterToChoices(new InvertFilter_());
 	}
 	
 	private void addFilterToChoices(AbstractBaseFilter plugin){
