@@ -4,6 +4,10 @@ import ij.gui.GenericDialog;
 import utility.Image2D;
 import utility.Point;
 
+/**
+ * CheckerBoardFilter
+ * Views the original and the filtered image in a checkerboard presentation next to each other
+ */
 public class CheckerBoardFilter_ extends AbstractCompareFilter{
 
 	private int blockCount = 4;
@@ -16,7 +20,10 @@ public class CheckerBoardFilter_ extends AbstractCompareFilter{
 	@Override
 	public void compareImage(Image2D inputImage, Image2D pluginImage, Image2D outputImage) {
 		int blockSize = inputImage.getWidth() / blockCount;
-				
+	
+		/*
+		 * Iterators for the pictures, must be the same size
+		 */
 		Iterator<Point<Integer>> inputIterator = inputImage.pointIterator();
 		Iterator<Point<Integer>> pluginIterator = pluginImage.pointIterator();
 		
@@ -29,6 +36,10 @@ public class CheckerBoardFilter_ extends AbstractCompareFilter{
 			
 			int x = inputPoint.getX();
 			int y = inputPoint.getY();
+			
+			/*
+			 * Depending on the x,y position, views a point from the filtered or the unfiltered picture
+			 */
 			if(((x / blockSize) + (y / blockSize)) % 2 == 0 ){
 				newValue = inputPoint.getValue();
 			}else{
