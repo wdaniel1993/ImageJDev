@@ -2,7 +2,7 @@ package utility;
 import java.util.Iterator;
 
 
-/*
+/**
  * Utility class for Image2D
  * converts the Image2D into a byte array
  */

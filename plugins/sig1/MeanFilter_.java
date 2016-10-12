@@ -1,5 +1,9 @@
 import utility.Image2D;
 
+/**
+ * Mean Filter
+ * Calculates the mean of all values in the mask and returns it as new value for the given x,y position
+ */
 public class MeanFilter_ extends AbstractMaskFilter {
 
 	@Override
