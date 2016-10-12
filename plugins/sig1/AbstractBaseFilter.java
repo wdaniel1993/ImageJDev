@@ -28,14 +28,17 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 		final Image2D outputImage = new ByteImage2D(pixels, width, height);
 
 		inputDialog();
+		//Time before processing
 		long startTime = System.currentTimeMillis();
+		//Calls abstract method, which processes the input image and writes changes into the output image
 		processImage(inputImage, outputImage);
+		//Calculate the ellapsed time, by get the difference between the current time (after the processing) and the start time
 		long ellapsedTime = System.currentTimeMillis() - startTime;
 		
 		byte[] outPixels = Image2DUtility.convertFromImage2D(outputImage);
 		ImageJUtility.showNewImage(outPixels, width, height,getFilterName());
 		
-		
+		//Show the ellapsed time if the showTimer is true, this can be set in the GenericDialog
 		if(showTimer){
 			IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
 		}
