@@ -70,12 +70,14 @@ public abstract class AbstractMaskFilter extends AbstractBaseFilter {
 	protected abstract int transformImagePoint(int x, int y, Image2D mask);
 	
 	public void readDialogResult(GenericDialog gd) {
-		this.threadCount = (int) gd.getNextNumber();
 		this.radius = (int) gd.getNextNumber();
+		this.threadCount = (int) gd.getNextNumber();
+		super.readDialogResult(gd);
 	}
 
 	public void prepareDialog(GenericDialog gd) {
-		gd.addNumericField("Threads", this.threadCount, 0);
 		gd.addNumericField("Radius", this.radius, 0);
+		gd.addNumericField("Threads", this.threadCount, 0);
+		super.prepareDialog(gd);
 	}
 }

@@ -1,6 +1,4 @@
 import java.util.Iterator;
-
-import ij.gui.GenericDialog;
 import utility.Image2D;
 import utility.Point;
 
@@ -26,12 +24,4 @@ public class InvertFilter_ extends AbstractBaseFilter {
 	public String getFilterName() {
 		return "invert filter";
 	}
-
-	@Override
-	public void readDialogResult(GenericDialog gd) {	}
-
-	@Override
-	public void prepareDialog(GenericDialog gd) {	}
-	
-	public void inputDialog(){}
 }

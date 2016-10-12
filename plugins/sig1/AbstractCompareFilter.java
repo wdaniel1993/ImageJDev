@@ -57,11 +57,13 @@ public abstract class AbstractCompareFilter extends AbstractBaseFilter {
 	@Override
 	public void readDialogResult(GenericDialog gd) {
 		choice = gd.getNextChoice();
+		super.readDialogResult(gd);
 	}
 
 	@Override
 	public void prepareDialog(GenericDialog gd) {
 		gd.addChoice("filter",choiceNames(), choices.keys().nextElement());
+		super.prepareDialog(gd);
 	}
 	
 	private String[] choiceNames() {

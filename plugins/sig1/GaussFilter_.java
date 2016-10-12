@@ -97,13 +97,13 @@ public class GaussFilter_ extends AbstractMaskFilter {
 
 	@Override
 	public void readDialogResult(GenericDialog gd) {
+		this.sigma = gd.getNextNumber();
 		super.readDialogResult(gd);
-		this.sigma = gd.getNextNumber();		
 	}
 
 	@Override
 	public void prepareDialog(GenericDialog gd) {
-		super.prepareDialog(gd);
 		gd.addNumericField("Sigma", this.sigma , 1);
+		super.prepareDialog(gd);
 	}
 }

@@ -1,8 +1,6 @@
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import ij.gui.GenericDialog;
 import utility.Image2D;
 import utility.Point;
 
@@ -69,13 +67,4 @@ public class HistogramEqualizationFilter_ extends AbstractBaseFilter {
 	public String getFilterName() {
 		return "histogram equalization filter";
 	}
-
-	@Override
-	public void readDialogResult(GenericDialog gd) {	}
-
-	@Override
-	public void prepareDialog(GenericDialog gd) {	}
-	
-	public void inputDialog(){}
-
 }

@@ -52,14 +52,14 @@ public class CheckerBoardFilter_ extends AbstractCompareFilter{
 	
 	@Override
 	public void readDialogResult(GenericDialog gd) {
+		this.blockCount = (int) gd.getNextNumber();	
 		super.readDialogResult(gd);
-		this.blockCount = (int) gd.getNextNumber();		
 	}
 
 	@Override
 	public void prepareDialog(GenericDialog gd) {
-		super.prepareDialog(gd);
 		gd.addNumericField("Block Count:", this.blockCount , 0);
+		super.prepareDialog(gd);
 	}
 
 }

@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -15,6 +16,8 @@ import utility.ImageJUtility;
  */
 public abstract class AbstractBaseFilter implements PlugInFilter {
 	
+	private boolean showTimer = false;
+	
 	@Override
 	public void run(ImageProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();
@@ -25,11 +28,24 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 		final Image2D outputImage = new ByteImage2D(pixels, width, height);
 
 		inputDialog();
-		
+		long startTime = System.currentTimeMillis();
 		processImage(inputImage, outputImage);
+		long ellapsedTime = System.currentTimeMillis() - startTime;
 		
 		byte[] outPixels = Image2DUtility.convertFromImage2D(outputImage);
 		ImageJUtility.showNewImage(outPixels, width, height,getFilterName());
+		
+		
+		if(showTimer){
+			IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
+		}
+	}
+	
+	private static String formatTime(long millis) {
+	    SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
+
+	    String strDate = sdf.format(millis);
+	    return strDate;
 	}
 
 	@Override
@@ -52,9 +68,13 @@ public abstract class AbstractBaseFilter implements PlugInFilter {
 	
 	public abstract String getFilterName();
 	
-	public abstract void readDialogResult(GenericDialog gd);
+	public void readDialogResult(GenericDialog gd){
+		showTimer = gd.getNextBoolean();
+	}
 
-	public abstract void prepareDialog(GenericDialog gd);
+	public void prepareDialog(GenericDialog gd) {
+		gd.addCheckbox("Timer", false);
+	}
 	
 	/*
 	 * Opens a dialog, prepares the dialog and reads the values
