@@ -2,6 +2,11 @@ import java.util.Iterator;
 import utility.Image2D;
 import utility.Point;
 
+/**
+ * InvertFilter
+ * Low values become high values and vice versa
+ *
+ */
 public class InvertFilter_ extends AbstractBaseFilter {
 
 	@Override
