@@ -69,7 +69,7 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 	}
 
 
-	protected abstract int resamplePoint(double d, double e, Image2D valuesForTransform);
+	protected abstract int resamplePoint(double relativeX, double relativeY, Image2D valuesForTransform);
 
 
 
