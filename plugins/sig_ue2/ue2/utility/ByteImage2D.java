@@ -30,6 +30,15 @@ public class ByteImage2D extends Image2D{
 	}
 	
 	/*
+	 * Initialises with an empty array
+	 */
+	public ByteImage2D(int width, int height){
+		super(width, height);
+		int[][] array2D = new int[width][height];
+		image = array2D;
+	}
+	
+	/*
 	 * Initialises the two dimensional array with a int array
 	 */
 	public ByteImage2D(int[] values, int width, int height){
