@@ -1,4 +1,4 @@
-import utility.Image2D;
+import ue1.utility.Image2D;
 
 /**
  * Mean Filter

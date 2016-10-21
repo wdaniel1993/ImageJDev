@@ -1,8 +1,9 @@
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import utility.Image2D;
-import utility.Point;
+
+import ue1.utility.Image2D;
+import ue1.utility.Point;
 
 /**
  * Implementation of a history equalization filter

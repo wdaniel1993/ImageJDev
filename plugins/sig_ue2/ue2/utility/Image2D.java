@@ -1,6 +1,10 @@
-package utility;
+package ue2.utility;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import ue2.utility.Image2D;
+import ue2.utility.MaskImage2D;
+import ue2.utility.Point;
 
 /**
  * Image2D

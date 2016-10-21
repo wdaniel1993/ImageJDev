@@ -1,7 +1,7 @@
 import ij.gui.GenericDialog;
 import ij.process.ImageProcessor;
-import utility.Image2D;
-import utility.ImageJUtility;
+import ue1.utility.Image2D;
+import ue1.utility.ImageJUtility;
 
 /**
  * Implementation of the gaussian blur filter

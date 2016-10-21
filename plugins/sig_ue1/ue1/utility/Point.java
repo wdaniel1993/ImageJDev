@@ -1,4 +1,4 @@
-package utility;
+package ue1.utility;
 
 public class Point<T> {
 	private int x;

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import ij.gui.GenericDialog;
-import utility.Image2D;
-import utility.Point;
+import ue1.utility.Image2D;
+import ue1.utility.Point;
 
 /**
  * AbstractMaskFilter is the base class for all filters which are using the surrounding pixels for value calculation

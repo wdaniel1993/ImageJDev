@@ -1,6 +1,7 @@
 import java.util.Iterator;
-import utility.Image2D;
-import utility.Point;
+
+import ue1.utility.Image2D;
+import ue1.utility.Point;
 
 /**
  * InvertFilter

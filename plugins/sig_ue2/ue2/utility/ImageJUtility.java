@@ -1,7 +1,8 @@
-package utility;
+package ue2.utility;
 import ij.ImagePlus;
 import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
+import ue2.utility.ImageJUtility;
 
 public class ImageJUtility {
 

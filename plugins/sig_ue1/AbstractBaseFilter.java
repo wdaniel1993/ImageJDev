@@ -4,10 +4,10 @@ import ij.ImagePlus;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
-import utility.ByteImage2D;
-import utility.Image2D;
-import utility.Image2DUtility;
-import utility.ImageJUtility;
+import ue1.utility.ByteImage2D;
+import ue1.utility.Image2D;
+import ue1.utility.Image2DUtility;
+import ue1.utility.ImageJUtility;
 
 /**
  * Abstractly implements the ImageJ PlugInFilter

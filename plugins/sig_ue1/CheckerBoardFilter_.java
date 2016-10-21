@@ -1,8 +1,8 @@
 import java.util.Iterator;
 
 import ij.gui.GenericDialog;
-import utility.Image2D;
-import utility.Point;
+import ue1.utility.Image2D;
+import ue1.utility.Point;
 
 /**
  * CheckerBoardFilter

@@ -3,10 +3,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import ij.gui.GenericDialog;
-import utility.ByteImage2D;
-import utility.Image2D;
-import utility.Image2DUtility;
-import utility.ImageJUtility;
+import ue1.utility.ByteImage2D;
+import ue1.utility.Image2D;
+import ue1.utility.Image2DUtility;
+import ue1.utility.ImageJUtility;
 
 /**
  * Abstract base class for all filters which compare two images

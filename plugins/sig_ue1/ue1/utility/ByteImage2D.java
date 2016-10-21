@@ -1,4 +1,6 @@
-package utility;
+package ue1.utility;
+
+import ue1.utility.Image2D;
 
 /**
  * Implements Image2D backed with a two dimensional int array, which represents the values of the pixels

@@ -1,4 +1,6 @@
-package utility;
+package ue1.utility;
+
+import ue1.utility.Image2D;
 
 /**
  * Proxies an Image2D with an offset, width and height
