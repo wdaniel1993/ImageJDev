@@ -39,6 +39,19 @@ public abstract class Image2D implements Iterable<Integer> {
 	}
 	
 	/*
+	 * returns a separate image which is defined by offset, width and height
+	 */
+	public Image2D getSubImageByIndizes(int startX, int startY, int endX, int endY){
+		int subImageOffsetX = Math.max(startX,0);
+		int subImageOffsetY = Math.max(startY,0);
+		int offsetX = endX - subImageOffsetX + 1;
+		int offsetY = endY - subImageOffsetY + 1;
+		return this.getSubImage(subImageOffsetX, subImageOffsetY, offsetX, offsetY);
+	}
+	
+	
+	
+	/*
 	 * returns a subimage which is defined by a point and a surrounding radius
 	 */
 	public Image2D getMask(int x, int y, int radius){

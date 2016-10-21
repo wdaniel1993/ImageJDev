@@ -1,3 +1,5 @@
+import java.util.Iterator;
+
 import ij.IJ;
 import ij.ImagePlus;
 import ij.gui.GenericDialog;
@@ -7,6 +9,7 @@ import ue2.utility.ByteImage2D;
 import ue2.utility.Image2D;
 import ue2.utility.Image2DUtility;
 import ue2.utility.ImageJUtility;
+import ue2.utility.Point;
 
 public abstract class AbstractResamplingFilter implements PlugInFilter {
 
@@ -27,7 +30,7 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 		/*
 		 * Factor below or equal to 0
 		 */
-		if(resizeFactor <= 0){
+		if(resizeFactor <= 0 || resizeFactor > 10){
 			return;
 		}
 		
@@ -37,7 +40,7 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 		Image2D outputImage = resizeImage(inputImage, resizeFactor);
 		
 		byte[] outPixels = Image2DUtility.convertFromImage2D(outputImage);
-		ImageJUtility.showNewImage(outPixels, width, height,getFilterName());
+		ImageJUtility.showNewImage(outPixels, outputImage.getWidth(), outputImage.getHeight(),getFilterName());
 		
 	}
 	
@@ -45,7 +48,36 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 
 	public Image2D resizeImage(Image2D inputImage, double resizeFactor) {
 		final Image2D outputImage = new ByteImage2D((int) (inputImage.getWidth() / resizeFactor), (int) (inputImage.getHeight() / resizeFactor));
-		return null;
+		final Iterator<Point<Integer>> outputIterator = outputImage.pointIterator();
+		
+		while(outputIterator.hasNext()){
+			Point<Integer> currentPoint = outputIterator.next();
+			double transformedX = transformCoordinate(currentPoint.getX(),inputImage.getWidth(),outputImage.getWidth());
+			double transformedY = transformCoordinate(currentPoint.getY(),inputImage.getHeight(),outputImage.getHeight());
+			
+			int ceilX = (int) Math.ceil(transformedX);
+			int ceilY = (int) Math.ceil(transformedY);
+			int floorX = (int) Math.floor(transformedX);
+			int floorY = (int) Math.floor(transformedY);
+			Image2D valuesForTransform = inputImage.getSubImageByIndizes(ceilX, ceilY, floorX, floorY);
+			
+			int newVal = resamplePoint(transformedX - ceilX, transformedY - ceilY, valuesForTransform);
+			
+			outputImage.set(currentPoint.getX(),currentPoint.getY(), newVal);
+		}
+		
+		return outputImage;
+	}
+
+
+	protected abstract int resamplePoint(double d, double e, Image2D valuesForTransform);
+
+
+
+	private double transformCoordinate(int coordinate, int lengthOriginal, int lengthNew){
+		double r = 1.0 / (2*lengthOriginal);
+		double rb = (2* (double)coordinate +1)/(2*lengthNew);
+		return (rb -r) * lengthOriginal;
 	}
 
 
