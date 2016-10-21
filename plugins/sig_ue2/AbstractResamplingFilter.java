@@ -28,7 +28,7 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 		double resizeFactor = gd.getNextNumber();
 		
 		/*
-		 * Factor below or equal to 0
+		 * abort if factor below or equal to 0 or bigger then 10
 		 */
 		if(resizeFactor <= 0 || resizeFactor > 10){
 			return;
@@ -47,7 +47,7 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 	
 
 	public Image2D resizeImage(Image2D inputImage, double resizeFactor) {
-		final Image2D outputImage = new ByteImage2D((int) (inputImage.getWidth() / resizeFactor), (int) (inputImage.getHeight() / resizeFactor));
+		final Image2D outputImage = new ByteImage2D((int) (inputImage.getWidth() * resizeFactor), (int) (inputImage.getHeight() * resizeFactor));
 		final Iterator<Point<Integer>> outputIterator = outputImage.pointIterator();
 		
 		while(outputIterator.hasNext()){
@@ -59,11 +59,10 @@ public abstract class AbstractResamplingFilter implements PlugInFilter {
 			int ceilY = (int) Math.ceil(transformedY);
 			int floorX = (int) Math.floor(transformedX);
 			int floorY = (int) Math.floor(transformedY);
-			Image2D valuesForTransform = inputImage.getSubImageByIndizes(ceilX, ceilY, floorX, floorY);
+			Image2D valuesForTransform = inputImage.getSubImageByIndizes(floorX, floorY, ceilX, ceilY);
 			
-			int newVal = resamplePoint(transformedX - ceilX, transformedY - ceilY, valuesForTransform);
-			
-			outputImage.set(currentPoint.getX(),currentPoint.getY(), newVal);
+			int newVal = resamplePoint(transformedX - floorX, transformedY - floorY, valuesForTransform);
+			outputImage.set(currentPoint.getX(),currentPoint.getY(), newVal);	
 		}
 		
 		return outputImage;

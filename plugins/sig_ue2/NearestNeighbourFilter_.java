@@ -1,4 +1,3 @@
-import ij.IJ;
 import ue2.utility.Image2D;
 
 public class NearestNeighbourFilter_ extends AbstractResamplingFilter{
@@ -11,14 +10,10 @@ public class NearestNeighbourFilter_ extends AbstractResamplingFilter{
 			indexX = (int) Math.round(relativeX);
 		}
 		if(!(valuesForTransform.getHeight() == 1)){
-			indexX = (int) Math.round(relativeY);
+			indexY = (int) Math.round(relativeY);
 		}
-		try{
-			return valuesForTransform.get(indexX, indexY);
-		}catch(RuntimeException ex){
-			IJ.showMessage(relativeX + " -  " + relativeY + " -  " + indexX + " -  " + indexY);
-			throw ex;
-		}
+		return valuesForTransform.get(indexX, indexY);
+		
 		
 	}
 
