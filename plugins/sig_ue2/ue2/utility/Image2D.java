@@ -39,7 +39,7 @@ public abstract class Image2D implements Iterable<Integer> {
 	}
 	
 	/*
-	 * returns a separate image which is defined by offset, width and height
+	 * returns a separate image which is defined by indizes
 	 */
 	public Image2D getSubImageByIndizes(int startX, int startY, int endX, int endY){
 		int subImageStartOffsetX = Math.max(startX,0);

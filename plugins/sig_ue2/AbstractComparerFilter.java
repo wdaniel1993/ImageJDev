@@ -23,6 +23,7 @@ public abstract class AbstractComparerFilter implements PlugInFilter {
 		
 		final Image2D inputImage = new ByteImage2D(pixels, width, height);
 		
+		//Read resize factor
 		GenericDialog gd = new GenericDialog("User Input");
 		gd.addNumericField("Resize factor", 2, 1);
 		gd.showDialog();
@@ -31,16 +32,16 @@ public abstract class AbstractComparerFilter implements PlugInFilter {
 		}
 		double resizeFactor = gd.getNextNumber();
 		
-		//use the selected filter on the image
+		//Instantiate the resampling filters and resize the images
 		AbstractResamplingFilter plugin1 = new BiLinearFilter_();
 		AbstractResamplingFilter plugin2 = new NearestNeighbourFilter_();
 		Image2D image1 = plugin1.resizeImage(inputImage, resizeFactor);
 		Image2D image2 = plugin2.resizeImage(inputImage, resizeFactor);
 		
-		//compare the original image with the filtered one
+		//compare the two resized images
 		Image2D comparedImage = compareImage(image1, image2);
 		
-		//output the filtered image in a separate window (the comparison will be shown in the base class)
+		//output the comparision
 		byte[] outPixels = Image2DUtility.convertFromImage2D(comparedImage);
 		ImageJUtility.showNewImage(outPixels, comparedImage.getWidth(), comparedImage.getHeight(),getFilterName());	
 	}
