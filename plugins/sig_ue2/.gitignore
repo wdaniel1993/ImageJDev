@@ -1,3 +1,9 @@
 /AbstractResamplingFilter.class
 /NearestNeighbourFilter_.class
 /BiLinearFilter_.class
+/AbstractCompareFilter.class
+/CheckerBoardFilter_.class
+/DifferenceFilter_.class
+/AbstractComparerFilter.class
+/CheckerBoardResamplingFilter_.class
+/DifferenceResamplingFilter_.class
