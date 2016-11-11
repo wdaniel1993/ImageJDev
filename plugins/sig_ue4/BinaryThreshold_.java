@@ -4,7 +4,7 @@ import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ue4.utility.ImageJUtility;
 
-public class BinaryThresholdBorder_ implements PlugInFilter {
+public class BinaryThreshold_ implements PlugInFilter {
 
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("about"))
@@ -19,15 +19,14 @@ public class BinaryThresholdBorder_ implements PlugInFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		int thresholdTop = 100;
-		int thresholdBottom = 80;
+		int threshold = 127;
 		int BG_VAL = 0;
 		int FG_VAL = 255;
 		
 		int[][] outArr = new int[width][height];
 		for(int x = 0; x < width; x++){
 			for(int y = 0; y <height; y++){
-				if(inArr[x][y] <= thresholdTop && inArr[x][y] >= thresholdBottom){
+				if(inArr[x][y] < threshold){
 					outArr[x][y] = FG_VAL;
 				}
 				else{
@@ -39,7 +38,7 @@ public class BinaryThresholdBorder_ implements PlugInFilter {
 		
 		
 		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "threshold");
+		ImageJUtility.showNewImage(outPixels, width, height, "threshold with T= " + threshold);
 		
 	} //run
 
