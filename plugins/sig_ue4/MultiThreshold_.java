@@ -19,18 +19,31 @@ public class MultiThreshold_ implements PlugInFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		int threshold = 80;
-		int BG_VAL = 0;
-		int FG_VAL = 255;
+		int T1 = 20;
+		int T2 = 55;
+		int T3 = 85;
+		int T4 = 140;
+		int T5 = 200;
 		
 		int[][] outArr = new int[width][height];
 		for(int x = 0; x < width; x++){
 			for(int y = 0; y <height; y++){
-				if(inArr[x][y] < threshold){
-					outArr[x][y] = FG_VAL;
+				if(inArr[x][y] < T1){
+					outArr[x][y] = 1;
 				}
-				else{
-					outArr[x][y] = BG_VAL;
+				else if(inArr[x][y] < T2){
+					outArr[x][y] = 2;
+				}
+				else if(inArr[x][y] < T3){
+					outArr[x][y] = 3;
+				}
+				else if(inArr[x][y] < T4){
+					outArr[x][y] = 4;
+				}
+				else if(inArr[x][y] < T5){
+					outArr[x][y] = 5;
+				}else {
+					outArr[x][y] = 0;
 				}
 			}
 		}
@@ -38,7 +51,7 @@ public class MultiThreshold_ implements PlugInFilter {
 		
 		
 		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "threshold with T= " + threshold);
+		ImageJUtility.showNewImage(outPixels, width, height, "threshold with T");
 		
 	} //run
 
