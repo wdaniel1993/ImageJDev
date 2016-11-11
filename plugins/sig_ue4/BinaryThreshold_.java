@@ -19,7 +19,7 @@ public class BinaryThreshold_ implements PlugInFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		int threshold = 127;
+		int threshold = 80;
 		int BG_VAL = 0;
 		int FG_VAL = 255;
 		
@@ -37,7 +37,7 @@ public class BinaryThreshold_ implements PlugInFilter {
 		
 		
 		
-		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(inArr, width, height);
+		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
 		ImageJUtility.showNewImage(outPixels, width, height, "threshold with T= " + threshold);
 		
 	} //run
