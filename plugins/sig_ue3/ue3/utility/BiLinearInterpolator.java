@@ -1,6 +1,6 @@
 package ue3.utility;
 
-import ue2.utility.Image2D;
+import ue3.utility.Image2D;
 
 public class BiLinearInterpolator extends Interpolator {
 

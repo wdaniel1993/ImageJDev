@@ -1,9 +1,9 @@
 package ue3.utility;
 
-import ue2.utility.Image2D;
+import ue3.utility.Image2D;
 
 public abstract class Interpolator {
-	public int getInterpolatedValue(Image2D image, int posX, int posY){
+	public int getInterpolatedValue(Image2D image, double posX, double posY){
 		int ceilX = (int) Math.ceil(posX);
 		int ceilY = (int) Math.ceil(posY);
 		int floorX = (int) Math.floor(posX);
