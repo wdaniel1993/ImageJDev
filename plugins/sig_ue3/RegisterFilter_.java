@@ -21,35 +21,6 @@ public class RegisterFilter_ implements PlugInFilter {
 		return DOES_8G + DOES_STACKS + SUPPORTS_MASKING;
 	} // setup
 
-	// TODO
-	public double getEntropyOfImg(int[][] imgData, int width, int height) {
-
-		return -1;
-	} // getEntropyOfImg
-
-	// TODO
-	public double getEntropyOfImages(int[][] imgA, int[][] imgB, int width, int height) {
-		return -1;
-	}
-
-	// TODO
-	public int getBilinearInterpolatedValue(int[][] imgData, int width, int height, double idxX, double idxY) {
-		return -1;
-	} // getBilinearInterpolatedValue
-
-	public int getNNInterpolatedValue(int[][] imgData, int width, int height, double idxX, double idxY) {
-		int x1 = (int) (idxX + 0.5);
-		int y1 = (int) (idxY + 0.5);
-
-		if ((x1 >= 0) && (y1 >= 0) && (x1 < width) && (y1 < height)) {
-			int actVal = imgData[x1][y1];
-			return actVal;
-		} // if
-		else {
-			return 255;
-		} // else ==> outside mask
-	} // getBilinearInterpolatedValue
-
 	public int[][] getDiffImg(int[][] imgA, int[][] imgB, int width, int height) {
 		int[][] returnImg = new int[width][height];
 
@@ -61,82 +32,6 @@ public class RegisterFilter_ implements PlugInFilter {
 		return returnImg;
 	} // getDiffImg
 
-	public double getImgDiffMI(int[][] imgData1, int[][] imgData2, int width, int height) {
-		return getEntropyOfImg(imgData1, width, height) + getEntropyOfImg(imgData2, width, height)
-				- getEntropyOfImages(imgData1, imgData2, width, height);
-	} // getImgDiffMI
-
-	public double getImgDiffSSE(int[][] imgData1, int[][] imgData2, int width, int height) {
-		double errorVal = 0.0;
-		
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if(imgData1[x][y] !=  imgData2[x][y]) {
-					int diffVal = imgData1[x][y] - imgData2[x][y];
-					errorVal += diffVal * diffVal;
-				}
-			}
-		}
-
-		return errorVal;
-	} // getImageDiffSS
-	
-	public double getImgDiffBinary(int[][] imgData1, int[][] imgData2, int width, int height) {
-		double errorVal = 0.0;
-		
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				if(imgData1[x][y] !=  imgData2[x][y]) {
-					errorVal++;
-				}
-			}
-		}
-
-		return errorVal;
-	} // getImageDiffSS
-
-	public int[][] transformImg(int[][] inImg, int width, int height, double transX, double transY, double rotAngle) {
-		int[][] retArr = new int[width][height];
-
-		// calc center position
-
-		// rotation angle degree ==> radian
-
-		double radAngle = -rotAngle / 180 * Math.PI;
-		double cosTheta = Math.cos(radAngle);
-		double sinTheta = Math.sin(radAngle);
-		
-		double midX = width / 2.0;
-		double midY = height / 2.0;
-
-		// backprojekt all pixels of result image B
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				
-				// move coordinates to center
-				double posX = x - midX;
-				double posY = y - midY;
-
-				// rotate
-				double newX = posX * cosTheta + posY * sinTheta;
-				double newY = -posX * sinTheta + posY * cosTheta;
-
-				//move coordinates back from center
-				newX = newX + midX;
-				newY = newY + midY;
-				
-				// translate
-				posX = newX - transX;
-				posY = newY - transY;
-
-				int scalarVal = getNNInterpolatedValue(inImg, width, height, posX, posY);
-				
-				retArr [x][y] = scalarVal;
-			}
-		}
-
-		return retArr;
-	} // transformImg
 
 	public void run(ImageProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();

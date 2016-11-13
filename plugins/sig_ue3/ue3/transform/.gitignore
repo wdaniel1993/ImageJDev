@@ -1,1 +1,6 @@
 /TransformHelper.class
+/ImageComparator.class
+/ImageDifference.class
+/BinaryDifference.class
+/SumOfSquaredErrorDifference.class
+/MutualInformationDifference.class
