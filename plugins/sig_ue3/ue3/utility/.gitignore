@@ -9,3 +9,6 @@
 /Image2DUtility.class
 /MaskImage2D.class
 /Point.class
+/Interpolator.class
+/NearestNeighbourInterpolator.class
+/BiLinearInterpolator.class
