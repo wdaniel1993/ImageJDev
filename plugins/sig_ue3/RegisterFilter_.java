@@ -1,11 +1,12 @@
+import java.util.List;
+
 import ij.*;
-import ij.text.*;
 import ue3.utility.ImageJUtility;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.*;
-
-import java.awt.*;
-
+import ue3.utility.Image2DUtility;
+import ue3.utility.ByteImage2D;
+import ue3.utility.Image2D;
 import ij.gui.GenericDialog;
 
 public class RegisterFilter_ implements PlugInFilter {
@@ -143,7 +144,15 @@ public class RegisterFilter_ implements PlugInFilter {
 		int height = ip.getHeight();
 
 		int[][] inDataArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
-
+		
+		final Image2D inputImage = new ByteImage2D(pixels, width, height);
+		
+		List<Image2D> images = Image2DUtility.splitImageVertical(inputImage);
+		Image2DUtility.showImage2D(images.get(0), "first image");
+		Image2DUtility.showImage2D(images.get(1), "second image");
+		
+		return;
+/*
 		// ... do something
 		double transX = 0;
 		double transY = 0;
@@ -174,7 +183,7 @@ public class RegisterFilter_ implements PlugInFilter {
 		
 		byte[] diffImgArr1D = ImageJUtility.convertFrom2DIntArr(diffImgAB, width, height);
 		ImageJUtility.showNewImage(diffImgArr1D, width, height, "diff image, SSE= " + sumOfSquaredError + ", Binary = " + binaryMatchError);
-
+*/
 	} // run
 
 	void showAbout() {
