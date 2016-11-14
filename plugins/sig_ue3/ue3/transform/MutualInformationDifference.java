@@ -15,7 +15,7 @@ public class MutualInformationDifference implements ImageDifference{
 		return 0;
 	}
 
-	private int getEntropyOfImg(Image2D image1) {
+	private int getEntropyOfImg(Image2D image) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
