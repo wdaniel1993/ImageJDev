@@ -23,4 +23,8 @@ public class BinaryDifference implements ImageDifference {
 		return errorVal;
 	}
 
+	@Override
+	public String getName() {
+		return "Binary Difference";
+	}
 }

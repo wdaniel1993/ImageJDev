@@ -43,5 +43,10 @@ public class MutualInformationDifference implements ImageDifference{
 		System.arraycopy(array2, 0, array1and2, array1.length, array2.length);
 		return array1and2;
 	}
+	
+	@Override
+	public String getName() {
+		return "Mutual Information Difference";
+	}
 
 }

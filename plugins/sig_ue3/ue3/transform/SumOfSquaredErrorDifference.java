@@ -24,4 +24,8 @@ public class SumOfSquaredErrorDifference implements ImageDifference{
 		return errorVal;
 	}
 	
+	@Override
+	public String getName() {
+		return "Sum Of Squared Error Difference";
+	}
 }
