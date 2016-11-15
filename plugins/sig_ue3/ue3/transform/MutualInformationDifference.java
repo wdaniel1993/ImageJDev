@@ -3,7 +3,6 @@ package ue3.transform;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import ue3.utility.Image2D;
 
 public class MutualInformationDifference implements ImageDifference{
@@ -15,7 +14,26 @@ public class MutualInformationDifference implements ImageDifference{
 	}
 
 	private double getEntropyOfImages(Image2D image1, Image2D image2) {
-		return getEntropyOfInts(joinArrays(image1.asArray(), image2.asArray()));
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		
+		int[] array1 = image1.asArray();
+		int[] array2 = image2.asArray();
+		
+		for(int i = 0; i< array1.length; i++){
+			String key = array1[i] + "|" + array2[i];
+			if(map.containsKey(key)){
+				map.put(key,map.get(key)+1);
+			}else {
+				map.put(key,1);
+			}
+		}
+		
+		double sum = 0.0;
+		for(Entry<String,Integer> entry : map.entrySet()){
+			double p = ((double) entry.getValue()) / array1.length;
+			sum += p * (Math.log(p) / Math.log(2));
+		}
+		return sum * -1;
 	}
 
 	private double getEntropyOfImg(Image2D image) {
@@ -26,22 +44,19 @@ public class MutualInformationDifference implements ImageDifference{
 		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 		
 		for(int value : array){
-			map.put(value, map.getOrDefault(value, 0)+1);
+			if(map.containsKey(value)){
+				map.put(value,map.get(value)+1);
+			}else {
+				map.put(value,1);
+			}
 		}
 		
 		double sum = 0.0;
 		for(Entry<Integer,Integer> entry : map.entrySet()){
-			double p = entry.getValue() / array.length;
+			double p = ((double) entry.getValue()) / array.length;
 			sum += p * (Math.log(p) / Math.log(2));
 		}
 		return sum * -1;
-	}
-	
-	public int[] joinArrays(int[] array1, int[] array2){
-		int[] array1and2 = new int[array1.length + array2.length];
-		System.arraycopy(array1, 0, array1and2, 0, array1.length);
-		System.arraycopy(array2, 0, array1and2, array1.length, array2.length);
-		return array1and2;
 	}
 	
 	@Override
