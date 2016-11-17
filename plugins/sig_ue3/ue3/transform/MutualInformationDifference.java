@@ -9,6 +9,10 @@ public class MutualInformationDifference implements ImageDifference{
 
 	@Override
 	public double calculateDifference(Image2D image1, Image2D image2) {
+		return calculateMutualInformation(image1, image2) * -1;
+	}
+	
+	public double calculateMutualInformation(Image2D image1, Image2D image2) {
 		return getEntropyOfImg(image1) + getEntropyOfImg(image2)
 		- getEntropyOfImages(image1, image2);
 	}
