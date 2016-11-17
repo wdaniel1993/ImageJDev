@@ -114,8 +114,8 @@ public class RegisterFilter_ implements PlugInFilter {
 			 for(double transX = estTransX - searchX * stepX; transX <= estTransX + searchX * stepX; transX += stepX){
 				 for(double transY = estTransY - searchY * stepY; transY <= estTransY + searchY * stepY; transY += stepY){
 					 for(double transRot = estRotAngle - searchRot * stepRot; transRot <= estRotAngle + searchRot * stepRot; transRot += stepRot){
-						 Image2D transformedImage = TransformHelper.transformImage(imageB, transX, transY, transRot, new NearestNeighbourInterpolator());
-						 double difference = diffCalculator.calculateDifference(imageA, transformedImage);
+						 Image2D transformedImage = TransformHelper.transformImage(imageA, transX, transY, transRot, new NearestNeighbourInterpolator());
+						 double difference = diffCalculator.calculateDifference(transformedImage, imageB);
 						 IJ.log("transformed image (x = " + transX + ", y = " + transY + ", rot = " + transRot +", diff = "+ difference +")");
 						 if(difference < minDifference){
 							 minDifference = difference;
@@ -127,17 +127,19 @@ public class RegisterFilter_ implements PlugInFilter {
 				 }
 			 }
 			 
-			 estTransX = minX;
-			 estTransY = minY;
-			 estRotAngle = minRot;
-			 stepX /= 2;
-			 stepY /= 2;
-			 stepRot /= 2;
-			 
+			 if(estTransX == minX && estTransY == minY && estRotAngle == minRot){
+				 stepX /= 2;
+				 stepY /= 2;
+				 stepRot /= 2;
+			 }else {
+				 estTransX = minX;
+				 estTransY = minY;
+				 estRotAngle = minRot;
+			 }
 			 IJ.showProgress((int)((finalStep / stepRot) * 100), 100);
 		 }
 		 
-		 Image2D outputImage = TransformHelper.transformImage(imageB, estTransX, estTransY, estRotAngle, new BiLinearInterpolator());
+		 Image2D outputImage = TransformHelper.transformImage(imageA, estTransX, estTransY, estRotAngle, new BiLinearInterpolator());
 		 Image2DUtility.showImage2D(outputImage, "registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle +" )");
 		 long ellapsedTime = System.currentTimeMillis() - startTime;
 		 IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
