@@ -1,6 +1,7 @@
 package ue3.transform;
 
 import java.util.Iterator;
+import java.util.List;
 
 import ue3.utility.ByteImage2D;
 import ue3.utility.Image2D;
@@ -53,5 +54,43 @@ public class TransformHelper {
 		}
 
 		return retImage;
+	}
+	
+	public static int calculateDifferenceWithDistanceMap(List<Point<Integer>> points, Image2D distanceMap, double transX, double transY, double rotAngle, Interpolator interpolator){
+		int width = distanceMap.getWidth();
+		int height = distanceMap.getHeight();
+		double radAngle = -rotAngle / 180 * Math.PI;
+		double cosTheta = Math.cos(radAngle);
+		double sinTheta = Math.sin(radAngle);
+		
+		double midX = width / 2.0;
+		double midY = height / 2.0;
+
+		int sum = 0;
+
+		for(Point<Integer> currentPoint : points){
+			int x = currentPoint.getX();
+			int y = currentPoint.getY();
+			
+			// move coordinates to center
+			double posX = x - midX;
+			double posY = y - midY;
+
+			// rotate
+			double newX = posX * cosTheta + posY * sinTheta;
+			double newY = -posX * sinTheta + posY * cosTheta;
+
+			//move coordinates back from center
+			newX = newX + midX;
+			newY = newY + midY;
+			
+			// translate
+			posX = newX - transX;
+			posY = newY - transY;
+
+			sum += interpolator.getInterpolatedValue(distanceMap, posX, posY);	
+		}
+
+		return sum;
 	}
 }

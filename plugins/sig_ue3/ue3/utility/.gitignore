@@ -12,3 +12,4 @@
 /Interpolator.class
 /NearestNeighbourInterpolator.class
 /BiLinearInterpolator.class
+/ThresholdUtility.class

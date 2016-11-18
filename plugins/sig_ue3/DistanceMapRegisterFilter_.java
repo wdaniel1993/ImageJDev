@@ -1,110 +1,90 @@
 import java.text.SimpleDateFormat;
-import java.util.Dictionary;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import ij.*;
-import ue3.utility.NearestNeighbourInterpolator;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.*;
-import ue3.utility.Image2DUtility;
-import ue3.transform.BinaryDifference;
-import ue3.transform.ImageDifference;
-import ue3.transform.MutualInformationDifference;
-import ue3.transform.SumOfSquaredErrorDifference;
+import ij.process.ImageProcessor;
 import ue3.transform.TransformHelper;
 import ue3.utility.BiLinearInterpolator;
 import ue3.utility.ByteImage2D;
 import ue3.utility.Image2D;
-import ij.gui.GenericDialog;
+import ue3.utility.Image2DUtility;
+import ue3.utility.NearestNeighbourInterpolator;
+import ue3.utility.Point;
+import ue3.utility.ThresholdUtility;
 
-public class RegisterFilter_ implements PlugInFilter {
+public class DistanceMapRegisterFilter_ implements PlugInFilter {
 
-	public int BG_VAL = 255;
-	private Dictionary<String, ImageDifference> choices = new Hashtable<String, ImageDifference>();
-
-	public RegisterFilter_() {
-		addImageDifferenceToChoices(new BinaryDifference());
-		addImageDifferenceToChoices(new MutualInformationDifference());
-		addImageDifferenceToChoices(new SumOfSquaredErrorDifference());
-	}
-
-	public int setup(String arg, ImagePlus imp) {
-		if (arg.equals("about")) {
-			showAbout();
-			return DONE;
-		} // if
-		return DOES_8G + DOES_STACKS + SUPPORTS_MASKING;
-	} // setup
-
+	@Override
 	public void run(ImageProcessor ip) {
 		byte[] pixels = (byte[]) ip.getPixels();
 		int width = ip.getWidth();
 		int height = ip.getHeight();
 
 		final Image2D inputImage = new ByteImage2D(pixels, width, height);
-
 		List<Image2D> images = Image2DUtility.splitImageVertical(inputImage);
 
 		Image2D imageA = images.get(0);
 		Image2D imageB = images.get(1);
 
-		// ... do something
+		int threshold = 127;
+		
 		double estTransX = 0;
 		double estTransY = 0;
 		double estRotAngle = 0;
-		ImageDifference diffCalculator = null;
 
 		double stepX = 1;
 		double stepY = 1;
 		double stepRot = 1;
 
-		double finalStep = 0.2;
+		double finalStep = 0.1;
 
-		double searchX = 10;
-		double searchY = 10;
-		double searchRot = 5;
+		double searchX = 20;
+		double searchY = 20;
+		double searchRot = 10;
 
 		GenericDialog gd = new GenericDialog("Estimate values");
-		
+
+		gd.addNumericField("threshold", threshold, 0);
 		gd.addMessage("Estimates:");
-		
+
 		gd.addNumericField("translation X", estTransX, 1);
 		gd.addNumericField("translation Y", estTransY, 1);
 		gd.addNumericField("rotation", estRotAngle, 1);
-		
+
 		gd.addMessage("Initial Step Sizes:");
-		
+
 		gd.addNumericField("step size X", stepX, 1);
 		gd.addNumericField("step size Y", stepY, 1);
 		gd.addNumericField("step size Rotation", stepRot, 1);
-		
+
 		gd.addMessage("Step Count:");
-		
+
 		gd.addNumericField("step count X", searchX, 1);
 		gd.addNumericField("step count Y", searchY, 1);
 		gd.addNumericField("step count Rotation", searchRot, 1);
-			
+
 		gd.addMessage("Konfiguration:");
-		
+
 		gd.addNumericField("precision", finalStep, 1);
-		gd.addChoice("calculator", choiceNames(), choices.keys().nextElement());
 		gd.addCheckbox("move only", false);
 		gd.addCheckbox("show log", false);
-		
+
 		gd.showDialog();
 		if (gd.wasCanceled()) {
 			return;
 		}
-
-		Image2DUtility.showImage2D(imageA, "image A");
-		Image2DUtility.showImage2D(imageB, "image B");
+		
+		threshold = (int) gd.getNextNumber();
 
 		estTransX = gd.getNextNumber();
 		estTransY = gd.getNextNumber();
 		estRotAngle = gd.getNextNumber();
-		
+
 		stepX = gd.getNextNumber();
 		stepY = gd.getNextNumber();
 		stepRot = gd.getNextNumber();
@@ -112,22 +92,43 @@ public class RegisterFilter_ implements PlugInFilter {
 		searchX = gd.getNextNumber();
 		searchY = gd.getNextNumber();
 		searchRot = gd.getNextNumber();
-		
+
 		finalStep = gd.getNextNumber();
-		diffCalculator = choices.get(gd.getNextChoice());
 		boolean moveOnly = gd.getNextBoolean();
 		boolean showLog = gd.getNextBoolean();
-		if(moveOnly){
+		if (moveOnly) {
 			searchRot = 0;
 			estRotAngle = 0;
 		}
-		
 
+		Image2D thresholdImageA = ThresholdUtility.binaryThreshold(imageA, threshold, true);
+		Image2D thresholdImageB = ThresholdUtility.binaryThreshold(imageB, threshold, true);
+
+		Image2DUtility.showImage2D(imageA, "image A");
+		Image2DUtility.showImage2D(imageB, "image B");
+
+		ImagePlus distanceMapImpA = Image2DUtility.toImagePlus(thresholdImageA, "distance Map");
+		IJ.run(distanceMapImpA, "Distance Map", "");
+		Image2D distanceMap = Image2DUtility.fromImagePlus(distanceMapImpA);
+
+		ImageProcessor edgesIP = Image2DUtility.toImageProcessor(thresholdImageB);
+		edgesIP.findEdges();
+		Image2D edges = Image2DUtility.fromImageProcessor(edgesIP);
+
+		List<Point<Integer>> landMarks = new ArrayList<Point<Integer>>();
+		Iterator<Point<Integer>> it = edges.pointIterator();
+		while (it.hasNext()) {
+			Point<Integer> point = it.next();
+			if (point.getValue() == 255) {
+				landMarks.add(point);
+			}
+		}
+		
 		IJ.showProgress((int) ((finalStep / stepRot) * 100), 100);
 		long startTime = System.currentTimeMillis();
 
 		while (stepX >= finalStep || stepY >= finalStep || stepRot >= finalStep) {
-			double minDifference = Double.MAX_VALUE;
+			int minDifference = Integer.MAX_VALUE;
 			double minX = 0;
 			double minY = 0;
 			double minRot = 0;
@@ -137,9 +138,7 @@ public class RegisterFilter_ implements PlugInFilter {
 						+ searchY * stepY; transY += stepY) {
 					for (double transRot = estRotAngle - searchRot * stepRot; transRot <= estRotAngle
 							+ searchRot * stepRot; transRot += stepRot) {
-						Image2D transformedImage = TransformHelper.transformImage(imageA, transX, transY, transRot,
-								new NearestNeighbourInterpolator());
-						double difference = diffCalculator.calculateDifference(transformedImage, imageB);
+						int difference = TransformHelper.calculateDifferenceWithDistanceMap(landMarks, distanceMap, transX, transY, transRot, new NearestNeighbourInterpolator());
 						
 						if(showLog){
 							IJ.log("transformed image (x = " + transX + ", y = " + transY + ", rot = " + transRot
@@ -165,40 +164,37 @@ public class RegisterFilter_ implements PlugInFilter {
 			
 			IJ.showProgress((int) ((finalStep / stepRot) * 100), 100);
 		}
-
+		
 		Image2D outputImage = TransformHelper.transformImage(imageA, estTransX, estTransY, estRotAngle,
 				new BiLinearInterpolator());
 		Image2DUtility.showImage2D(outputImage,
 				"registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
 		Image2DUtility.showImage2D(Image2DUtility.calculateDifferenceImage(outputImage, imageB),
 				"difference image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
+		
 		long ellapsedTime = System.currentTimeMillis() - startTime;
 		IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
-	} // run
+
+	}
+
+	@Override
+	public int setup(String arg, ImagePlus imp) {
+		if (arg.equals("about")) {
+			showAbout();
+			return DONE;
+		} // if
+		return DOES_8G + DOES_STACKS + SUPPORTS_MASKING;
+	}
 
 	public void showAbout() {
-		IJ.showMessage("About RegisterFilter_ ...", "core registration functionality ");
+		IJ.showMessage("About DistanceMapRegisterFilter_ ...", "distance map registration functionality ");
 	} // showAbout
-
-	private void addImageDifferenceToChoices(ImageDifference id) {
-		choices.put(id.getName(), id);
-	}
-
-	private String[] choiceNames() {
-		Enumeration<String> keys = choices.keys();
-		String[] names = new String[choices.size()];
-
-		for (int i = 0; i < choices.size(); i++) {
-			names[i] = keys.nextElement();
-		}
-
-		return names;
-	}
-
+	
 	private static String formatTime(long millis) {
 		SimpleDateFormat sdf = new SimpleDateFormat("mm:ss.SSS");
 
 		String strDate = sdf.format(millis);
 		return strDate;
 	}
-} // class RegisterFilter_
+
+}

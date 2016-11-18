@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ij.ImagePlus;
+import ij.process.ByteProcessor;
+import ij.process.ImageProcessor;
 import ue3.utility.ByteImage2D;
 import ue3.utility.Point;
 import ue3.utility.Image2D;
@@ -29,6 +32,33 @@ public class Image2DUtility {
 		}
 
 		return outArray2D;
+	}
+	
+	
+	public static ImagePlus toImagePlus(Image2D image, String title) {
+		ImageProcessor outImgProc = toImageProcessor(image);
+		ImagePlus ip = new ImagePlus(title, outImgProc);
+		return ip;
+	}
+	
+	public static Image2D fromImagePlus(ImagePlus imp) {
+		ImageProcessor ip = imp.getProcessor();
+		return fromImageProcessor(ip);
+	}
+	
+	public static ByteProcessor toImageProcessor(Image2D image) {
+		byte[] outPixels = Image2DUtility.convertFromImage2D(image);
+		ByteProcessor outImgProc = new ByteProcessor(image.getWidth(), image.getHeight());
+		outImgProc.setPixels(outPixels);
+		return outImgProc;
+	}
+	
+	public static Image2D fromImageProcessor(ImageProcessor ip) {
+		byte[] pixels = (byte[]) ip.getPixels();
+		int width = ip.getWidth();
+		int height = ip.getHeight();
+
+		return new ByteImage2D(pixels, width, height);
 	}
 	
 	public static void showImage2D(Image2D image, String windowMessage) {
