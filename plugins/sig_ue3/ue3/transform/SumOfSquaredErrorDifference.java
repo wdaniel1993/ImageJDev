@@ -16,9 +16,8 @@ public class SumOfSquaredErrorDifference implements ImageDifference{
 			Point<Integer> currentPoint = iterator.next();
 			int x = currentPoint.getX();
 			int y = currentPoint.getY();
-			if(image1.get(x, y) !=  image2.get(x, y)) {
-				errorVal++;
-			}
+			int diffVal = image1.get(x, y)- image2.get(x, y);
+			errorVal += diffVal * diffVal;
 		}
 
 		return errorVal;

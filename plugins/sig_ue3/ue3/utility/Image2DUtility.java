@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ue3.utility.ByteImage2D;
+import ue3.utility.Point;
 import ue3.utility.Image2D;
 
 
@@ -32,6 +34,25 @@ public class Image2DUtility {
 	public static void showImage2D(Image2D image, String windowMessage) {
 		byte[] outPixels = Image2DUtility.convertFromImage2D(image);
 		ImageJUtility.showNewImage(outPixels, image.getWidth(), image.getHeight(),windowMessage);	
+	}
+	
+	public static Image2D calculateDifferenceImage(Image2D image1, Image2D image2) {
+		Image2D outputImage = new ByteImage2D(image1.getWidth(),image1.getHeight());
+		Iterator<Point<Integer>> inputIterator = image1.pointIterator();
+		Iterator<Point<Integer>> pluginIterator = image2.pointIterator();
+		
+		//Iterate over every point of the pictures
+		while (inputIterator.hasNext()) {
+			
+			Point<Integer> inputPoint = inputIterator.next();
+			Point<Integer> pluginPoint = pluginIterator.next();
+			
+			//Absolute difference between the points in the original and the filtered image
+			Integer newValue = Math.abs(inputPoint.getValue() - pluginPoint.getValue());
+
+			outputImage.set(inputPoint.getX(), inputPoint.getY(), newValue);
+		}
+		return outputImage;
 	}
 	
 	public static List<Image2D> splitImageVertical(Image2D image){

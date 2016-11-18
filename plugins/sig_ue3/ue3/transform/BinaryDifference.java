@@ -16,8 +16,9 @@ public class BinaryDifference implements ImageDifference {
 			Point<Integer> currentPoint = iterator.next();
 			int x = currentPoint.getX();
 			int y = currentPoint.getY();
-			int diffVal = image1.get(x, y)- image2.get(x, y);
-			errorVal += diffVal * diffVal;
+			if(image1.get(x, y) !=  image2.get(x, y)) {
+				errorVal++;
+			}
 		}
 
 		return errorVal;

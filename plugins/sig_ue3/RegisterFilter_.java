@@ -120,12 +120,11 @@ public class RegisterFilter_ implements PlugInFilter {
 		stepY = gd.getNextNumber();
 		stepRot = gd.getNextNumber();
 
-		finalStep = gd.getNextNumber();
-
 		searchX = gd.getNextNumber();
 		searchY = gd.getNextNumber();
-		searchRot = gd.getNextNumber();;
+		searchRot = gd.getNextNumber();
 		
+		finalStep = gd.getNextNumber();
 		diffCalculator = choices.get(gd.getNextChoice());
 		moveOnly = gd.getNextBoolean();
 		if(moveOnly){
@@ -177,6 +176,8 @@ public class RegisterFilter_ implements PlugInFilter {
 				new BiLinearInterpolator());
 		Image2DUtility.showImage2D(outputImage,
 				"registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
+		Image2DUtility.showImage2D(Image2DUtility.calculateDifferenceImage(outputImage, imageB),
+				"difference image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
 		long ellapsedTime = System.currentTimeMillis() - startTime;
 		IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
 	} // run
