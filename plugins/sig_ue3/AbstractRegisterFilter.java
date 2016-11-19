@@ -24,9 +24,9 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 
 	private double finalStep = 0.1;
 
-	private double searchX = 20;
-	private double searchY = 20;
-	private double searchRot = 10;
+	private double searchX = 10;
+	private double searchY = 10;
+	private double searchRot = 5;
 	
 	private boolean moveOnly = false;
 	private boolean showLog = false;
@@ -54,6 +54,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		IJ.showProgress((int) ((finalStep / stepRot) * 100), 100);
 		
 		prepareImages(imageA, imageB);
+		
 		
 		long startTime = System.currentTimeMillis();
 		
