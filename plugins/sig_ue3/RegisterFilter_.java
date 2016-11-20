@@ -70,4 +70,9 @@ public class RegisterFilter_ extends AbstractRegisterFilter {
 	public String getFilterName() {
 		return "RegisterFilter_";
 	}
+
+	@Override
+	protected double calculateInitialDifference() {
+		return diffCalculator.calculateDifference(imageA, imageB);
+	}
 } // class RegisterFilter_

@@ -71,6 +71,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		long startTime = System.currentTimeMillis();
 		
 		
+		double initialDifference = calculateInitialDifference();
 		double minDifference = Double.MAX_VALUE;
 		double minX = 0;
 		double minY = 0;
@@ -130,18 +131,22 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		
 		//show the transformed image
 		Image2DUtility.showImage2D(outputImage,
-				"registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
+				"registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + ", difference = " + minDifference  +" )");
 		
 		//show difference images
 		Image2DUtility.showImage2D(Image2DUtility.calculateDifferenceImage(outputImage, imageB),
-				"difference image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
+				"difference image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle  + ", difference = " + minDifference  + " )");
 		
 		//show ellapsed time
 		long ellapsedTime = System.currentTimeMillis() - startTime;
-		IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
+		IJ.showMessage("Initial difference = " + initialDifference + "\n"
+				+ "Final difference = "+ minDifference + " \n"
+				+ "Ellapsed Time = " + formatTime(ellapsedTime));
 	}
 	
 	protected abstract double transformAndCalculateDifference(double transX, double transY, double transRot);
+	
+	protected abstract double calculateInitialDifference();
 	
 	protected abstract void prepareImages(Image2D imageA, Image2D imageB );
 	

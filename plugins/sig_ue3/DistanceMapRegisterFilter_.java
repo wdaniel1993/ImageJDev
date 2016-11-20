@@ -91,4 +91,9 @@ public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 	    return picks;
 	}
 
+	@Override
+	protected double calculateInitialDifference() {
+		return TransformHelper.calculateDifferenceWithDistanceMap(landMarks, distanceMap, 0, 0, 0, new NearestNeighbourInterpolator());
+	}
+
 }
