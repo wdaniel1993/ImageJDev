@@ -3,8 +3,23 @@ package ue3.utility;
 import ue3.utility.Image2D;
 
 public class BiLinearInterpolator extends Interpolator {
+	
+	public int getInterpolatedValue(Image2D image, double posX, double posY){
+		if((posX >= 0) && (posY >= 0) && (posX < image.getWidth()) && (posY < image.getHeight())) {
+			//get surrounding indexes of the position
+			int ceilX = (int) Math.ceil(posX);
+			int ceilY = (int) Math.ceil(posY);
+			int floorX = (int) Math.floor(posX);
+			int floorY = (int) Math.floor(posY);
+			//get sub images surrounding the point
+			Image2D valuesForTransform = image.getSubImageByIndizes(floorX, floorY, ceilX, ceilY);
+			//get interpolated value by using the surrounding points
+			return calculateInterpolatedValue(posX - floorX, posY - floorY, valuesForTransform);
+		} else {
+			return 255;
+		}
+	}
 
-	@Override
 	protected int calculateInterpolatedValue(double relativeX, double relativeY, Image2D valuesForTransform) {
 		double[] interpolationRows = new double[valuesForTransform.getHeight()];
 		

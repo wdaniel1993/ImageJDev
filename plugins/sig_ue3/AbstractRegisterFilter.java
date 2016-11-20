@@ -12,6 +12,12 @@ import ue3.utility.ByteImage2D;
 import ue3.utility.Image2D;
 import ue3.utility.Image2DUtility;
 
+/**
+ * AbstractRegisterFilter
+ * Base Class for Register Filter
+ * Most of the configuration is done in this class
+ * Splits the image and loops over all possible permutation which are tested for registration
+ */
 public abstract class AbstractRegisterFilter implements PlugInFilter {
 
 	private double estTransX = 0;
@@ -26,7 +32,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 	private double searchY = 10;
 	private double searchRot = 5;
 	
-	private double finalStep = 0.1;
+	private double precision = 0.1;
 	private double stepReductionFactor = 0.5;
 	private double rangeReductionFactor = 0.8;
 	
@@ -41,6 +47,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 
 		final Image2D inputImage = new ByteImage2D(pixels, width, height);
 
+		//Split in images in halves
 		List<Image2D> images = Image2DUtility.splitImageVertical(inputImage);
 
 		Image2D imageA = images.get(0);
@@ -50,28 +57,36 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 			return;
 		}
 		
+		//show the images
 		Image2DUtility.showImage2D(imageA, "image A");
 		Image2DUtility.showImage2D(imageB, "image B");
 		
-		IJ.showProgress((int) ((finalStep / stepRot) * 100), 100);
+		//show a progress
+		IJ.showProgress((int) ((precision / stepRot) * 100), 100);
 		
+		//calls a abstract method which can be used by subclasses to make preparation before the loop
 		prepareImages(imageA, imageB);
 		
-		
+		//start tracking time
 		long startTime = System.currentTimeMillis();
 		
-		while (stepX >= finalStep || stepY >= finalStep || stepRot >= finalStep) {
-			double minDifference = Double.MAX_VALUE;
-			double minX = 0;
-			double minY = 0;
-			double minRot = 0;
+		
+		double minDifference = Double.MAX_VALUE;
+		double minX = 0;
+		double minY = 0;
+		double minRot = 0;
+		
+		//iterate as long till the precision 
+		while (stepX >= precision || stepY >= precision || stepRot >= precision) {
 
+			//iterate over all permutations of move X, Y and rotation
 			for (double transX = estTransX - searchX * stepX; transX <= estTransX + searchX * stepX; transX += stepX) {
 				for (double transY = estTransY - searchY * stepY; transY <= estTransY
 						+ searchY * stepY; transY += stepY) {
 					for (double transRot = estRotAngle - searchRot * stepRot; transRot <= estRotAngle
 							+ searchRot * stepRot; transRot += stepRot) {
 						
+						//get the difference from the abstract method
 						double difference = transformAndCalculateDifference(transX, transY, transRot);
 						
 						if(showLog){
@@ -79,6 +94,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 									+ ", diff = " + difference + ")");
 						}
 						
+						//remember best solution
 						if (difference < minDifference) {
 							minDifference = difference;
 							minX = transX;
@@ -89,28 +105,38 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 				}
 			}
 
+			//Reduce the steps size
 			stepX *= stepReductionFactor;
 			stepY *= stepReductionFactor;
 			stepRot *= stepReductionFactor;
 			
+			//change search range - if rangeReductionFactor is bigger than stepReductionFactor the number of permutation for the next iteration rises
 			searchX *= rangeReductionFactor / stepReductionFactor;
 			searchY *= rangeReductionFactor / stepReductionFactor;
 			searchRot *= rangeReductionFactor / stepReductionFactor;
 			
+			//new base for the next loop iteration
 			estTransX = minX;
 			estTransY = minY;
 			estRotAngle = minRot;
 			
-			IJ.showProgress((int) ((finalStep / stepRot) * 100), 100);
+			//update progress
+			IJ.showProgress((int) ((precision / stepRot) * 100), 100);
 		}
 		
+		//transform image with the best transformation parameters found, because performance is not an important factor in this calculation the bilinearinterpolator is used
 		Image2D outputImage = TransformHelper.transformImage(imageA, estTransX, estTransY, estRotAngle,
 				new BiLinearInterpolator());
+		
+		//show the transformed image
 		Image2DUtility.showImage2D(outputImage,
 				"registered image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
+		
+		//show difference images
 		Image2DUtility.showImage2D(Image2DUtility.calculateDifferenceImage(outputImage, imageB),
 				"difference image (x = " + estTransX + ", y = " + estTransY + ", rot = " + estRotAngle + " )");
 		
+		//show ellapsed time
 		long ellapsedTime = System.currentTimeMillis() - startTime;
 		IJ.showMessage("Ellapsed Time: " + formatTime(ellapsedTime));
 	}
@@ -118,6 +144,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 	protected abstract double transformAndCalculateDifference(double transX, double transY, double transRot);
 	
 	protected abstract void prepareImages(Image2D imageA, Image2D imageB );
+	
 	@Override
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("about")) {
@@ -157,7 +184,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		searchY = gd.getNextNumber();
 		searchRot = gd.getNextNumber();
 
-		finalStep = gd.getNextNumber();
+		precision = gd.getNextNumber();
 		stepReductionFactor = gd.getNextNumber();
 		rangeReductionFactor = gd.getNextNumber();
 		
@@ -190,7 +217,7 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 
 		gd.addMessage("Precision:");
 
-		gd.addNumericField("precision", finalStep, 1);
+		gd.addNumericField("precision", precision, 1);
 		gd.addNumericField("step reduction", stepReductionFactor, 1);
 		gd.addNumericField("range reduction", rangeReductionFactor, 1);
 		

@@ -13,6 +13,10 @@ import ue3.utility.NearestNeighbourInterpolator;
 import ue3.utility.Point;
 import ue3.utility.ThresholdUtility;
 
+/**
+ * DistanceMapRegisterFilter_s
+ * Registration with 
+ */
 public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 
 	private int threshold = 127;
@@ -21,24 +25,30 @@ public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 	private List<Point<Integer>> landMarks;
 	private Image2D distanceMap;
 	
+	//Transform the landmarks and calculate the difference with the distance map prepared
 	@Override
 	protected double transformAndCalculateDifference(double transX, double transY, double transRot) {
 		return TransformHelper.calculateDifferenceWithDistanceMap(landMarks, distanceMap, transX, transY, transRot, new NearestNeighbourInterpolator());
 	}
 
+	//Prepare distance map and landmarks
 	@Override
 	protected void prepareImages(Image2D imageA, Image2D imageB) {
+		//calculate the background and foreground of the images with a binary threshold
 		Image2D thresholdImageA = ThresholdUtility.binaryThreshold(imageA, threshold, true);
 		Image2D thresholdImageB = ThresholdUtility.binaryThreshold(imageB, threshold, true);
 
+		//calculate distance map of the prepared image A
 		ImagePlus distanceMapImpA = Image2DUtility.toImagePlus(thresholdImageA, "distance Map");
 		IJ.run(distanceMapImpA, "Distance Map", "");
 		distanceMap = Image2DUtility.fromImagePlus(distanceMapImpA);
 
+		//calculate edges of the image B
 		ImageProcessor edgesIP = Image2DUtility.toImageProcessor(thresholdImageB);
 		edgesIP.findEdges();
 		Image2D edges = Image2DUtility.fromImageProcessor(edgesIP);
 
+		//pick landmarks from points in the edges
 		landMarks = new ArrayList<Point<Integer>>();
 		Iterator<Point<Integer>> it = edges.pointIterator();
 		while (it.hasNext()) {
@@ -67,6 +77,7 @@ public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 		return "DistanceMapRegisterFilter_";
 	}
 	
+	//Pick n elements from list
 	public static <E> List<E> pickNElements(List<E> list, int n) {
 		if ( list.size() < n) return list;
 		

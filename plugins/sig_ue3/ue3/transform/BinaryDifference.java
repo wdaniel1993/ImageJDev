@@ -5,6 +5,11 @@ import java.util.Iterator;
 import ue3.utility.Image2D;
 import ue3.utility.Point;
 
+
+/**
+ * BinaryDifference
+ * Calculate binary difference
+ */
 public class BinaryDifference implements ImageDifference {
 
 	@Override
@@ -16,6 +21,7 @@ public class BinaryDifference implements ImageDifference {
 			Point<Integer> currentPoint = iterator.next();
 			int x = currentPoint.getX();
 			int y = currentPoint.getY();
+			//errorValue gets incremented, if the values of the image are not equal
 			if(image1.get(x, y) !=  image2.get(x, y)) {
 				errorVal++;
 			}

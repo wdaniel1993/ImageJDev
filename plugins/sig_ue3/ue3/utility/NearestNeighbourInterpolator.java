@@ -5,17 +5,14 @@ import ue3.utility.Image2D;
 public class NearestNeighbourInterpolator extends Interpolator {
 
 	@Override
-	protected int calculateInterpolatedValue(double relativeX, double relativeY, Image2D valuesForTransform) {
-		//Round relative position to get the nearest coordinate in valuesForTransform and return the value
-		int indexX = 0;
-		int indexY = 0;
-		if(!(valuesForTransform.getWidth() == 1)){
-			indexX = (int) Math.round(relativeX);
+	public int getInterpolatedValue(Image2D image, double posX, double posY){
+		if((posX >= 0) && (posY >= 0) && (posX < image.getWidth()) && (posY < image.getHeight())) {
+			int indexX = (int) Math.round(posX);
+			int indexY = (int) Math.round(posY);
+			
+			return image.get(indexX, indexY);
+		} else {
+			return 255;
 		}
-		if(!(valuesForTransform.getHeight() == 1)){
-			indexY = (int) Math.round(relativeY);
-		}
-		return valuesForTransform.get(indexX, indexY);
 	}
-
 }

@@ -6,13 +6,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import ue3.utility.Image2D;
 
+/**
+ * MutualInformationDifference
+ * Calculate mutual information difference
+ *
+ */
 public class MutualInformationDifference implements ImageDifference{
 
 	@Override
 	public double calculateDifference(Image2D image1, Image2D image2) {
+		//higher the mutual information means less difference, so the value gets multiplied by -1
 		return calculateMutualInformation(image1, image2) * -1;
 	}
 	
+	//Calculate mutual infomation with the formular H(A) + H(B) - H(A,B)
 	public double calculateMutualInformation(Image2D image1, Image2D image2) {
 		return getEntropyOfImg(image1) + getEntropyOfImg(image2)
 		- getEntropyOfImages(image1, image2);
@@ -43,11 +50,13 @@ public class MutualInformationDifference implements ImageDifference{
 		return sum * -1;
 	}
 
+	//Calculate entropy of image
 	private double getEntropyOfImg(Image2D image) {
 		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 		
 		Iterator<Integer> bytes = image.iterator();
 		
+		//Calculate histogram
 		while(bytes.hasNext()){
 			int value = bytes.next();
 			if(map.containsKey(value)){
@@ -57,6 +66,7 @@ public class MutualInformationDifference implements ImageDifference{
 			}
 		}
 		
+		//Calculate entropoy with the sum of each probability of a scalar value multiplied by the log2 of the probability
 		double sum = 0.0;
 		for(Entry<Integer,Integer> entry : map.entrySet()){
 			double p = ((double) entry.getValue()) / image.getPointCount();

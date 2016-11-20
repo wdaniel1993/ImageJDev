@@ -15,14 +15,12 @@ public class TransformHelper {
 		Image2D retImage = new ByteImage2D(width,height);
 		Iterator<Point<Integer>> iterator = image.pointIterator();
 
-		// calc center position
-
 		// rotation angle degree ==> radian
-
 		double radAngle = -rotAngle / 180 * Math.PI;
 		double cosTheta = Math.cos(radAngle);
 		double sinTheta = Math.sin(radAngle);
 		
+		// calc center position
 		double midX = width / 2.0;
 		double midY = height / 2.0;
 
@@ -56,13 +54,17 @@ public class TransformHelper {
 		return retImage;
 	}
 	
+	//transform points and calculate the distance according to distance map
 	public static int calculateDifferenceWithDistanceMap(List<Point<Integer>> points, Image2D distanceMap, double transX, double transY, double rotAngle, Interpolator interpolator){
 		int width = distanceMap.getWidth();
 		int height = distanceMap.getHeight();
+		
+		// rotation angle degree ==> radian
 		double radAngle = -rotAngle / 180 * Math.PI;
 		double cosTheta = Math.cos(radAngle);
 		double sinTheta = Math.sin(radAngle);
 		
+		// calc center position
 		double midX = width / 2.0;
 		double midY = height / 2.0;
 

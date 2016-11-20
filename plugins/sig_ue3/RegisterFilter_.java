@@ -21,6 +21,7 @@ public class RegisterFilter_ extends AbstractRegisterFilter {
 	private Image2D imageB;
 
 	public RegisterFilter_() {
+		//add difference calculators for the choices in the dialog
 		addImageDifferenceToChoices(new BinaryDifference());
 		addImageDifferenceToChoices(new MutualInformationDifference());
 		addImageDifferenceToChoices(new SumOfSquaredErrorDifference());
@@ -51,6 +52,7 @@ public class RegisterFilter_ extends AbstractRegisterFilter {
 		return names;
 	}
 
+	//Transform image and calculate difference according to user choice 
 	@Override
 	protected double transformAndCalculateDifference(double transX, double transY, double transRot) {
 		Image2D transformedImage = TransformHelper.transformImage(imageA, transX, transY, transRot,

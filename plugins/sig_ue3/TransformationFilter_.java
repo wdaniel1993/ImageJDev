@@ -48,6 +48,7 @@ public class TransformationFilter_ implements PlugInFilter{
 		 transY = gd.getNextNumber();
 		 rotAngle = gd.getNextNumber();
 		 
+		 //transform image with user input parameters and bi linear interpolation
 		 Image2D outputImage = TransformHelper.transformImage(inputImage, transX, transY, rotAngle, new BiLinearInterpolator());
 		 
 		 Image2DUtility.showImage2D(outputImage, "transformed image");
