@@ -16,9 +16,11 @@ import ue3.utility.ThresholdUtility;
 public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 
 	private int threshold = 127;
+	private int landMarkCount = 20;
+
 	private List<Point<Integer>> landMarks;
 	private Image2D distanceMap;
-
+	
 	@Override
 	protected double transformAndCalculateDifference(double transX, double transY, double transRot) {
 		return TransformHelper.calculateDifferenceWithDistanceMap(landMarks, distanceMap, transX, transY, transRot, new NearestNeighbourInterpolator());
@@ -45,21 +47,37 @@ public class DistanceMapRegisterFilter_ extends AbstractRegisterFilter  {
 				landMarks.add(point);
 			}
 		}
+		landMarks = pickNElements(landMarks,landMarkCount);
 	}
 	
 	protected void prepareDialog(GenericDialog gd) {
 		gd.addNumericField("threshold", threshold, 0);
+		gd.addNumericField("landmark count", landMarkCount, 0);
 		super.prepareDialog(gd);
 	}
 	
 	protected void readDialogResult(GenericDialog gd) {
 		threshold = (int) gd.getNextNumber();
+		landMarkCount = (int) gd.getNextNumber();
 		super.readDialogResult(gd);
 	}
 
 	@Override
 	public String getFilterName() {
 		return "DistanceMapRegisterFilter_";
+	}
+	
+	public static <E> List<E> pickNElements(List<E> list, int n) {
+		if ( list.size() < n) return list;
+		
+		List<E> picks = new ArrayList<E>();
+		int skips = list.size() / n;
+
+	    for (int i = 0; i < n; i++)
+	    {
+	        picks.add(list.get(skips * i));
+	    }
+	    return picks;
 	}
 
 }

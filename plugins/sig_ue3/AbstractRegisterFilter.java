@@ -22,11 +22,13 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 	private double stepY = 1;
 	private double stepRot = 1;
 
-	private double finalStep = 0.1;
-
 	private double searchX = 10;
 	private double searchY = 10;
 	private double searchRot = 5;
+	
+	private double finalStep = 0.1;
+	private double stepReductionFactor = 0.5;
+	private double rangeReductionFactor = 0.8;
 	
 	private boolean moveOnly = false;
 	private boolean showLog = false;
@@ -87,9 +89,14 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 				}
 			}
 
-			stepX /= 2;
-			stepY /= 2;
-			stepRot /= 2;
+			stepX *= stepReductionFactor;
+			stepY *= stepReductionFactor;
+			stepRot *= stepReductionFactor;
+			
+			searchX *= rangeReductionFactor / stepReductionFactor;
+			searchY *= rangeReductionFactor / stepReductionFactor;
+			searchRot *= rangeReductionFactor / stepReductionFactor;
+			
 			estTransX = minX;
 			estTransY = minY;
 			estRotAngle = minRot;
@@ -151,6 +158,9 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		searchRot = gd.getNextNumber();
 
 		finalStep = gd.getNextNumber();
+		stepReductionFactor = gd.getNextNumber();
+		rangeReductionFactor = gd.getNextNumber();
+		
 		moveOnly = gd.getNextBoolean();
 		showLog = gd.getNextBoolean();
 		if (moveOnly) {
@@ -178,9 +188,14 @@ public abstract class AbstractRegisterFilter implements PlugInFilter {
 		gd.addNumericField("step count Y", searchY, 1);
 		gd.addNumericField("step count Rotation", searchRot, 1);
 
-		gd.addMessage("Konfiguration:");
+		gd.addMessage("Precision:");
 
 		gd.addNumericField("precision", finalStep, 1);
+		gd.addNumericField("step reduction", stepReductionFactor, 1);
+		gd.addNumericField("range reduction", rangeReductionFactor, 1);
+		
+		gd.addMessage("Konfiguration:");
+
 		gd.addCheckbox("move only", moveOnly);
 		gd.addCheckbox("show log", showLog);
 	}
