@@ -23,8 +23,8 @@ public class RegionGrowing_ implements PlugInFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		int lowerThresh = 80;
-		int upperThresh = 120;
+		int lowerThresh = 110;
+		int upperThresh = 250;
 		int BG_VAL = 0;
 		int FG_VAL = 255;
 		
