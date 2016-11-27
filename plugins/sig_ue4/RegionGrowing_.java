@@ -4,12 +4,19 @@ import java.util.Stack;
 
 import ij.IJ;
 import ij.ImagePlus;
-import ij.plugin.filter.PlugInFilter;
+import ij.gui.GenericDialog;
 import ij.process.ImageProcessor;
 import ue4.utility.ImageJUtility;
 
-public class RegionGrowing_ implements PlugInFilter {
+public class RegionGrowing_ extends AbstractSegmentationFilter {
 
+	private int lowerThresh = 110;
+	private int upperThresh = 250;
+	private boolean n4 = false;
+	
+	private int BG_VAL = 0;
+	private int FG_VAL = 255;
+	
 	public int setup(String arg, ImagePlus imp) {
 		if (arg.equals("about"))
 			{showAbout(); return DONE;}
@@ -23,10 +30,7 @@ public class RegionGrowing_ implements PlugInFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		int lowerThresh = 110;
-		int upperThresh = 250;
-		int BG_VAL = 0;
-		int FG_VAL = 255;
+		inputDialog();
 		
 		int[][] outArr = new int[width][height];
 		
@@ -48,22 +52,44 @@ public class RegionGrowing_ implements PlugInFilter {
 		while(!stack.empty()){
 			Point curPosition = stack.pop();
 			
+			
 			//search neighbours
-			for(int xOffset = -1; xOffset <= 1; xOffset++){
-				for(int yOffset = -1; yOffset <= 1; yOffset++){
+			
+			if(n4){
+				//n4 Adjacency
+				for(int xOffset = -1; xOffset <= 1; xOffset++){
 					int nbX = curPosition.x + xOffset;
+					int nbY = curPosition.y;
+					
+					//range check
+					if(isForegroundPoint(width, height, inArr, outArr, nbX, nbY)){
+						stack.push(new Point(nbX,nbY));
+					}
+				}
+				for(int yOffset = -1; yOffset <= 1; yOffset++){
+					int nbX = curPosition.x;
 					int nbY = curPosition.y + yOffset;
 					
 					//range check
-					if(nbX >= 0 && nbX < width && nbY >= 0 && nbY < height){
-						int nbVal = inArr[nbX][nbY];
-						if(nbVal >= lowerThresh && nbVal <= upperThresh && outArr[nbX][nbY] == BG_VAL){
-							outArr[nbX][nbY] = FG_VAL;
+					if(isForegroundPoint(width, height, inArr, outArr, nbX, nbY)){
+						stack.push(new Point(nbX,nbY));
+					}
+				}
+			}else{
+				//n8 Adjacency
+				for(int xOffset = -1; xOffset <= 1; xOffset++){
+					for(int yOffset = -1; yOffset <= 1; yOffset++){
+						int nbX = curPosition.x + xOffset;
+						int nbY = curPosition.y + yOffset;
+						
+						//range check
+						if(isForegroundPoint(width, height, inArr, outArr, nbX, nbY)){
 							stack.push(new Point(nbX,nbY));
 						}
 					}
 				}
 			}
+			
 		}
 		
 		
@@ -73,9 +99,33 @@ public class RegionGrowing_ implements PlugInFilter {
 		
 	} //run
 
+	private boolean isForegroundPoint(int width, int height, int[][] inArr, int[][] outArr, int nbX, int nbY) {
+		if(nbX >= 0 && nbX < width && nbY >= 0 && nbY < height){
+			int nbVal = inArr[nbX][nbY];
+			if(nbVal >= lowerThresh && nbVal <= upperThresh && outArr[nbX][nbY] == BG_VAL){
+				outArr[nbX][nbY] = FG_VAL;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void showAbout() {
 		IJ.showMessage("About Template_...",
 			"this is a PluginFilter template\n");
 	} //showAbout
 
+	@Override
+	protected void readDialogResult(GenericDialog gd) {
+		lowerThresh = (int) gd.getNextNumber();
+		upperThresh = (int) gd.getNextNumber();
+		n4 = gd.getNextBoolean();
+	}
+
+	@Override
+	protected void prepareDialog(GenericDialog gd) {
+		gd.addNumericField("lower threshold", this.lowerThresh, 0);
+		gd.addNumericField("upper threshold", this.upperThresh, 0);
+		gd.addCheckbox("N4 (default N8)", n4);
+	}
 }
