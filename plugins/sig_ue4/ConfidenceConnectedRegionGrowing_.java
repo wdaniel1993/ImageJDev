@@ -1,4 +1,7 @@
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import ij.IJ;
 import ij.ImagePlus;
@@ -7,10 +10,9 @@ import ij.process.ImageProcessor;
 import ue4.utility.ImageJUtility;
 import ue4.utility.SegmentationUtility;
 
-public class RegionGrowing_ extends AbstractSegmentationFilter {
+public class ConfidenceConnectedRegionGrowing_ extends AbstractSegmentationFilter {
 
-	private int lowerThresh = 110;
-	private int upperThresh = 250;
+	private double confidence = 0.5;
 	private boolean n4 = false;
 	
 	
@@ -33,10 +35,28 @@ public class RegionGrowing_ extends AbstractSegmentationFilter {
 		int startX = rect.x + rect.width / 2;
 		int startY = rect.y + rect.height / 2;
 		
-		int[][] outArr = SegmentationUtility.segmentRegionGrowing(width, height, inArr, startX, startY,n4,lowerThresh,upperThresh);
+		List<Integer> list = new ArrayList<Integer>();
+        for (int x = rect.x; x <= rect.x+rect.width; x++) {
+        	for (int y = rect.y; y <= rect.y + rect.height; y++) {
+        		list.add(inArr[x][y]);
+        	}
+        }
+        
+        Collections.sort(list);
+        
+        // Calculate confidence interval
+        double diff = (1.0 - confidence)/2.0;
+        
+        int q1 = (int)Math.round(diff * (list.size()+1));
+        int lower = list.get(q1);
+        
+        int q2 = (int)Math.round((1.0 - diff)        *(list.size()+1));
+        int upper = list.get(q2);
+		
+		int[][] outArr = SegmentationUtility.segmentRegionGrowing(width, height, inArr, startX, startY,n4,lower,upper);
 		
 		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
-		ImageJUtility.showNewImage(outPixels, width, height, "region growing (lower thresh = " + lowerThresh + ", upper thresh = " + upperThresh);
+		ImageJUtility.showNewImage(outPixels, width, height, "region growing (confidence = " + confidence);
 		
 	} //run
 
@@ -50,15 +70,13 @@ public class RegionGrowing_ extends AbstractSegmentationFilter {
 
 	@Override
 	protected void readDialogResult(GenericDialog gd) {
-		lowerThresh = (int) gd.getNextNumber();
-		upperThresh = (int) gd.getNextNumber();
+		confidence = gd.getNextNumber();
 		n4 = gd.getNextBoolean();
 	}
 
 	@Override
 	protected void prepareDialog(GenericDialog gd) {
-		gd.addNumericField("lower threshold", this.lowerThresh, 0);
-		gd.addNumericField("upper threshold", this.upperThresh, 0);
+		gd.addSlider("confidence", 0.01, 1, this.confidence);
 		gd.addCheckbox("N4 (default N8)", n4);
 	}
 }
