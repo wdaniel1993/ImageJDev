@@ -27,7 +27,9 @@ public class RegionGrowing_ extends AbstractSegmentationFilter {
 		
 		int[][] inArr = ImageJUtility.convertFrom1DByteArr(pixels, width, height);
 		
-		inputDialog();
+		if(!inputDialog()){
+			return;
+		}
 		
 		Rectangle rect = ip.getRoi();
 		int startX = rect.x + rect.width / 2;
