@@ -7,6 +7,11 @@ import ij.process.ImageProcessor;
 import ue4.utility.ImageJUtility;
 import ue4.utility.SegmentationUtility;
 
+/**
+ * RegionGrowing
+ * RegionGrwoing with two thresholds
+ *
+ */
 public class RegionGrowing_ extends AbstractSegmentationFilter {
 
 	private int lowerThresh = 110;
@@ -31,12 +36,21 @@ public class RegionGrowing_ extends AbstractSegmentationFilter {
 			return;
 		}
 		
+		/*
+		 * get middle of region of interest
+		 */
 		Rectangle rect = ip.getRoi();
 		int startX = rect.x + rect.width / 2;
 		int startY = rect.y + rect.height / 2;
 		
+		/*
+		 * start region growing from start points with the either n4 or n8 structure 
+		 */
 		int[][] outArr = SegmentationUtility.segmentRegionGrowing(width, height, inArr, startX, startY,n4,lowerThresh,upperThresh);
 		
+		/*
+		 * convert 2d to 1d array and shows image
+		 */
 		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
 		ImageJUtility.showNewImage(outPixels, width, height, "region growing (lower thresh = " + lowerThresh + ", upper thresh = " + upperThresh);
 		

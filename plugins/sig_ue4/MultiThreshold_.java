@@ -48,8 +48,6 @@ public class MultiThreshold_ implements PlugInFilter {
 			}
 		}
 		
-		
-		
 		byte[] outPixels = ImageJUtility.convertFrom2DIntArr(outArr, width, height);
 		ImageJUtility.showNewImage(outPixels, width, height, "threshold with T");
 		
